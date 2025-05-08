@@ -5,9 +5,8 @@ let markers: mapboxgl.Marker[] = [];
 
 // Initialize a map with default options
 export function initMap(container: HTMLElement, options: mapboxgl.MapOptions = {}): mapboxgl.Map {
-  // For demonstration, using mapbox's public token
-  // In a production environment, you would use your own token from environment variables
-  mapboxgl.accessToken = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+  // Use the Mapbox token from environment variables
+  mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
   
   const defaultOptions: mapboxgl.MapOptions = {
     container,

@@ -19,10 +19,10 @@ const HeroSection = () => {
               Create interactive maps of your journeys, share photos, and inspire others with your travel stories.
             </p>
             <Link href="/create">
-              <a className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2 inline-flex">
+              <div className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2 inline-flex cursor-pointer">
                 <Plus className="h-5 w-5" />
                 Create New Trip
-              </a>
+              </div>
             </Link>
           </div>
         </div>
