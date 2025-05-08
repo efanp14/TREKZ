@@ -199,6 +199,7 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
                       placeholder="What did you do here? What did you see?"
                       className="resize-none h-24"
                       {...field}
+                      value={field.value || ''}
                     />
                   </FormControl>
                   <FormMessage />
