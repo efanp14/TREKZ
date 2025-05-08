@@ -7,7 +7,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
-        heading: ["Akzidenz-Grotesk Next", "Montserrat", "system-ui", "sans-serif"],
+        heading: ["Akzidenz Grotesk", "Montserrat", "system-ui", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
