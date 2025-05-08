@@ -4,6 +4,8 @@ import { storage } from "./storage";
 import {
   insertTripSchema,
   insertPinSchema,
+  tripFormSchema,
+  pinFormSchema,
   type InsertTrip,
   type InsertPin,
 } from "@shared/schema";
@@ -218,8 +220,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create a new pin
   app.post(apiPath("/pins"), async (req: Request, res: Response) => {
     try {
-      // Validate request body
-      const parsedBody = insertPinSchema.safeParse(req.body);
+      // Validate request body using pinFormSchema for better date handling
+      const parsedBody = pinFormSchema.safeParse(req.body);
       if (!parsedBody.success) {
         return res.status(400).json({ 
           message: "Invalid pin data", 
