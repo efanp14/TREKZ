@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { getTripById, getPinsByTripId } from "@/lib/api";
-import { Calendar, Trash2, MapPin, Camera, Save, Edit, ArrowLeft, Pencil } from "lucide-react";
+import { Calendar, Trash2, MapPin, Camera, Save, Edit, ArrowLeft, Pencil, X, Image as ImageIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -117,7 +117,7 @@ const EditTrip = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data),
-      } as RequestInit);
+      });
       return response.json();
     },
     onSuccess: () => {
@@ -147,7 +147,7 @@ const EditTrip = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data),
-      } as RequestInit);
+      });
       return response.json();
     },
     onSuccess: () => {
@@ -168,7 +168,7 @@ const EditTrip = () => {
         headers: {
           'Content-Type': 'application/json'
         }
-      } as RequestInit);
+      });
     },
     onSuccess: () => {
       toast({
@@ -593,9 +593,9 @@ const EditTrip = () => {
                                 </h4>
                                 
                                 {/* Image preview */}
-                                {pinForm.getValues().photos && pinForm.getValues().photos.length > 0 && (
+                                {pinForm.getValues().photos && pinForm.getValues().photos?.length > 0 && (
                                   <div className="grid grid-cols-3 gap-2 mb-3">
-                                    {pinForm.getValues().photos.map((photo, index) => (
+                                    {pinForm.getValues().photos?.map((photo, index) => (
                                       <div key={index} className="relative group aspect-square rounded-md overflow-hidden border border-neutral-200">
                                         <img 
                                           src={photo} 
@@ -619,7 +619,7 @@ const EditTrip = () => {
                                   <label htmlFor={`photo-upload-${pin.id}`} className="flex items-center gap-2 px-3 py-2 rounded-md bg-neutral-100 hover:bg-neutral-200 cursor-pointer transition-colors">
                                     <ImageIcon className="h-4 w-4 text-neutral-700" />
                                     <span className="text-sm text-neutral-700">
-                                      {!pinForm.getValues().photos || pinForm.getValues().photos.length === 0 
+                                      {!pinForm.getValues().photos || pinForm.getValues().photos?.length === 0 
                                         ? 'Add photos' 
                                         : 'Add more photos'
                                       }
