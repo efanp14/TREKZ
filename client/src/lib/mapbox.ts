@@ -29,7 +29,11 @@ let markers: mapboxgl.Marker[] = [];
 // Initialize a map with default options
 export function initMap(container: HTMLElement, options: Omit<mapboxgl.MapOptions, 'container'> = {}): mapboxgl.Map {
   // Use the Mapbox token from environment variables
-  mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoiZWZhbnAiLCJhIjoiY21hZmxuZTVvMDQzYzJrcTVuczFlYWdnMiJ9.6CFAb0tbkHkgchHEkrg9vw';
+  if (import.meta.env.VITE_MAPBOX_TOKEN) {
+    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
+  } else {
+    console.error('VITE_MAPBOX_TOKEN environment variable is not set');
+  }
   
   const defaultOptions: mapboxgl.MapOptions = {
     container,

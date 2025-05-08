@@ -74,6 +74,7 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
   const [citySuggestions, setCitySuggestions] = useState<CitySearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
   
   const form = useForm<InsertPin>({
     resolver: zodResolver(pinFormSchema),
@@ -90,11 +91,76 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
     }
   });
 
+  // Effect to fetch city suggestions when search query changes
+  useEffect(() => {
+    const fetchCitySuggestions = async () => {
+      if (debouncedSearchQuery.trim().length < 2) {
+        setCitySuggestions([]);
+        setIsSearching(false);
+        return;
+      }
+
+      setIsSearching(true);
+      
+      try {
+        const results = await searchLocations(debouncedSearchQuery);
+        setCitySuggestions(results);
+      } catch (error) {
+        console.error('Error fetching city suggestions:', error);
+      } finally {
+        setIsSearching(false);
+      }
+    };
+
+    fetchCitySuggestions();
+  }, [debouncedSearchQuery]);
+
+  // Click outside handler for search suggestions
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (searchContainerRef.current && 
+          !searchContainerRef.current.contains(event.target as Node) &&
+          showSuggestions) {
+        setShowSuggestions(false);
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showSuggestions]);
+
+  // Function to handle selecting a city from suggestions
+  const handleSelectCity = (city: CitySearchResult) => {
+    if (map) {
+      // Fly to the selected city with animation
+      flyToLocation(map, city.location, 9);
+      
+      // Clear existing markers
+      clearMarkers();
+      
+      // Set search query to selected city name and close suggestions
+      setSearchQuery(city.fullName);
+      setShowSuggestions(false);
+      
+      // We don't set a pin immediately - user should click on specific point
+    }
+  };
+
+  // Check for Mapbox token existence
+  useEffect(() => {
+    // Check if the Mapbox access token is set
+    if (!import.meta.env.VITE_MAPBOX_TOKEN) {
+      console.warn('VITE_MAPBOX_TOKEN is not set. Map functionality will be limited.');
+    }
+  }, []);
+
   // Initialize map
   useEffect(() => {
     if (!mapContainerRef.current) return;
     
-    // No public token available, so we'll use a placeholder
+    // Initialize the map
     const mapInstance = initMap(mapContainerRef.current, {
       center: [-74.5, 40],
       zoom: 2
@@ -107,6 +173,7 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
       const lngLat = e.lngLat;
       setSelectedLocation({ lng: lngLat.lng, lat: lngLat.lat });
       
+      // Update form values
       form.setValue('longitude', lngLat.lng.toString());
       form.setValue('latitude', lngLat.lat.toString());
       
@@ -246,9 +313,66 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <div className="md:col-span-2">
-        {/* Map Container */}
+        {/* Map Container with Search Bar */}
         <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
-          <div ref={mapContainerRef} className="w-full h-[400px]"></div>
+          <div className="relative">
+            {/* Search input */}
+            <div className="absolute top-4 left-0 right-0 z-10 px-4">
+              <div className="relative" ref={searchContainerRef}>
+                <div className="relative w-full">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <Search className="h-4 w-4 text-neutral-500" />
+                  </div>
+                  <Input
+                    type="text"
+                    placeholder="Search for a city or location..."
+                    className="pl-10 pr-4 py-2 w-full shadow-lg border-0"
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setShowSuggestions(true);
+                    }}
+                    onFocus={() => setShowSuggestions(true)}
+                  />
+                  {isSearching && (
+                    <div className="absolute inset-y-0 right-3 flex items-center">
+                      <div className="h-4 w-4 border-2 border-primary-500 border-r-transparent rounded-full animate-spin"></div>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Suggestions dropdown */}
+                {showSuggestions && (debouncedSearchQuery.length > 1) && (
+                  <div className="absolute mt-1 w-full bg-white rounded-md shadow-lg z-20 max-h-60 overflow-auto">
+                    {citySuggestions.length === 0 && !isSearching ? (
+                      <div className="px-4 py-3 text-sm text-neutral-500">
+                        No locations found
+                      </div>
+                    ) : (
+                      <ul>
+                        {citySuggestions.map((city) => (
+                          <li
+                            key={city.id}
+                            className="px-4 py-2 hover:bg-neutral-100 cursor-pointer flex items-center gap-2 text-sm"
+                            onClick={() => handleSelectCity(city)}
+                          >
+                            <MapPinned className="h-4 w-4 text-primary-500" />
+                            <div>
+                              <div className="font-medium">{city.name}</div>
+                              <div className="text-neutral-500 text-xs">{city.fullName}</div>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Map */}
+            <div ref={mapContainerRef} className="w-full h-[400px]"></div>
+          </div>
         </div>
         
         {/* Add Pin Form */}
