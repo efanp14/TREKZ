@@ -11,7 +11,8 @@ import {
   ChevronLeft, 
   Eye,
   Tag,
-  Camera
+  Camera,
+  Edit
 } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -284,6 +285,16 @@ const TripDetails = () => {
                   >
                     <Share2 className="h-4 w-4" />
                     <span>Share</span>
+                  </Button>
+                  
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex items-center gap-1"
+                    onClick={() => navigate(`/trip/${tripId}/edit`)}
+                  >
+                    <Edit className="h-4 w-4" />
+                    <span>Edit Trip</span>
                   </Button>
                 </div>
               </CardContent>

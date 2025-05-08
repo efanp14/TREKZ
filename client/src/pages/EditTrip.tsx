@@ -38,6 +38,7 @@ const EditTrip = () => {
   
   const [activeTab, setActiveTab] = useState("details");
   const [editingPin, setEditingPin] = useState<number | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
   
   // Ensure we have a valid tripId
   const tripId = parseInt(id);
@@ -112,8 +113,11 @@ const EditTrip = () => {
     mutationFn: async (data: InsertTrip) => {
       const response = await apiRequest(`/api/trips/${validTripId}`, {
         method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(data),
-      });
+      } as RequestInit);
       return response.json();
     },
     onSuccess: () => {
@@ -139,8 +143,11 @@ const EditTrip = () => {
     mutationFn: async ({ pinId, data }: { pinId: number; data: Partial<InsertPin> }) => {
       const response = await apiRequest(`/api/pins/${pinId}`, {
         method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(data),
-      });
+      } as RequestInit);
       return response.json();
     },
     onSuccess: () => {
@@ -158,7 +165,10 @@ const EditTrip = () => {
     mutationFn: async (pinId: number) => {
       await apiRequest(`/api/pins/${pinId}`, {
         method: 'DELETE',
-      });
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      } as RequestInit);
     },
     onSuccess: () => {
       toast({
@@ -202,6 +212,59 @@ const EditTrip = () => {
     setEditingPin(pin.id);
   };
 
+  // Handle image upload for pin editing
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    
+    setUploadingImage(true);
+    
+    // Process each file
+    const processFiles = async () => {
+      const currentPhotos = pinForm.getValues().photos || [];
+      const newImageUrls: string[] = [];
+      
+      // Convert each file to a data URL
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        // Create a FileReader to read the file content
+        const reader = new FileReader();
+        
+        // Create a promise to handle the asynchronous file reading
+        const readFilePromise = new Promise<string>((resolve) => {
+          reader.onload = () => {
+            // reader.result contains the data URL
+            if (typeof reader.result === 'string') {
+              resolve(reader.result);
+            }
+          };
+        });
+        
+        // Start reading the file as a data URL
+        reader.readAsDataURL(file);
+        
+        // Wait for the file to be read and add the result to our URLs array
+        const dataUrl = await readFilePromise;
+        newImageUrls.push(dataUrl);
+      }
+      
+      // Add all new image URLs to our form state
+      pinForm.setValue('photos', [...currentPhotos, ...newImageUrls]);
+      setUploadingImage(false);
+    };
+    
+    // Start processing files
+    processFiles();
+  };
+  
+  // Remove an image from pin edit form
+  const removeImage = (indexToRemove: number) => {
+    const currentPhotos = pinForm.getValues().photos || [];
+    const updatedPhotos = currentPhotos.filter((_, i) => i !== indexToRemove);
+    pinForm.setValue('photos', updatedPhotos);
+  };
+  
   // Cancel editing a pin
   const cancelEditingPin = () => {
     setEditingPin(null);
@@ -400,7 +463,11 @@ const EditTrip = () => {
                             <FormItem>
                               <FormLabel>Cover Image URL</FormLabel>
                               <FormControl>
-                                <Input {...field} placeholder="https://example.com/image.jpg" />
+                                <Input 
+                                  {...field} 
+                                  placeholder="https://example.com/image.jpg" 
+                                  value={field.value || ''}
+                                />
                               </FormControl>
                               <FormMessage />
                               {field.value && (
@@ -518,7 +585,59 @@ const EditTrip = () => {
                                 placeholder="Describe this location..."
                               />
                               
-                              <div className="flex justify-end gap-2">
+                              {/* Photos editing section */}
+                              <div className="space-y-3">
+                                <h4 className="text-sm font-medium flex items-center gap-2">
+                                  <Camera className="h-4 w-4" />
+                                  Photos
+                                </h4>
+                                
+                                {/* Image preview */}
+                                {pinForm.getValues().photos && pinForm.getValues().photos.length > 0 && (
+                                  <div className="grid grid-cols-3 gap-2 mb-3">
+                                    {pinForm.getValues().photos.map((photo, index) => (
+                                      <div key={index} className="relative group aspect-square rounded-md overflow-hidden border border-neutral-200">
+                                        <img 
+                                          src={photo} 
+                                          alt={`Location photo ${index + 1}`} 
+                                          className="w-full h-full object-cover" 
+                                        />
+                                        <button
+                                          type="button"
+                                          onClick={() => removeImage(index)}
+                                          className="absolute top-1 right-1 bg-white rounded-full p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                                        >
+                                          <X className="h-3 w-3 text-red-500" />
+                                        </button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                                
+                                {/* Image upload button */}
+                                <div className="flex items-center">
+                                  <label htmlFor={`photo-upload-${pin.id}`} className="flex items-center gap-2 px-3 py-2 rounded-md bg-neutral-100 hover:bg-neutral-200 cursor-pointer transition-colors">
+                                    <ImageIcon className="h-4 w-4 text-neutral-700" />
+                                    <span className="text-sm text-neutral-700">
+                                      {!pinForm.getValues().photos || pinForm.getValues().photos.length === 0 
+                                        ? 'Add photos' 
+                                        : 'Add more photos'
+                                      }
+                                    </span>
+                                  </label>
+                                  <input
+                                    id={`photo-upload-${pin.id}`}
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleImageUpload}
+                                    className="hidden"
+                                  />
+                                  {uploadingImage && <span className="ml-3 text-sm text-neutral-500">Uploading...</span>}
+                                </div>
+                              </div>
+                              
+                              <div className="flex justify-end gap-2 pt-4">
                                 <Button
                                   variant="outline"
                                   size="sm"

@@ -117,12 +117,42 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
     
     setUploadingImage(true);
     
-    // Normally we would upload to a server here
-    // For now, we'll simulate by creating object URLs
-    const newImageUrls = Array.from(files).map(file => URL.createObjectURL(file));
-    setImageUrls(prev => [...prev, ...newImageUrls]);
+    // Process each file
+    const processFiles = async () => {
+      const newImageUrls: string[] = [];
+      
+      // Convert each file to a data URL
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        // Create a FileReader to read the file content
+        const reader = new FileReader();
+        
+        // Create a promise to handle the asynchronous file reading
+        const readFilePromise = new Promise<string>((resolve) => {
+          reader.onload = () => {
+            // reader.result contains the data URL
+            if (typeof reader.result === 'string') {
+              resolve(reader.result);
+            }
+          };
+        });
+        
+        // Start reading the file as a data URL
+        reader.readAsDataURL(file);
+        
+        // Wait for the file to be read and add the result to our URLs array
+        const dataUrl = await readFilePromise;
+        newImageUrls.push(dataUrl);
+      }
+      
+      // Add all new image URLs to our state
+      setImageUrls(prev => [...prev, ...newImageUrls]);
+      setUploadingImage(false);
+    };
     
-    setUploadingImage(false);
+    // Start processing files
+    processFiles();
   };
   
   // Function to remove an image
