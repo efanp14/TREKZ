@@ -15,9 +15,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { initMap, addMarker, clearMarkers } from "@/lib/mapbox";
 import { format } from "date-fns";
-import { MapPin, Plus, Calendar, CheckCircle2 } from "lucide-react";
+import { MapPin, Plus, Calendar, CheckCircle2, Camera, X, Image as ImageIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import TripTimeline from "./TripTimeline";
+import { Badge } from "@/components/ui/badge";
 
 interface PinEditorProps {
   trip: Trip;
@@ -51,6 +52,8 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
   const [map, setMap] = useState<mapboxgl.Map | null>(null);
   const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<{ lng: number; lat: number } | null>(null);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [uploadingImage, setUploadingImage] = useState(false);
   
   const form = useForm<InsertPin>({
     resolver: zodResolver(pinFormSchema),
@@ -107,12 +110,29 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
     };
   }, [pins]);
 
+  // Function to handle image upload
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    
+    setUploadingImage(true);
+    
+    // Normally we would upload to a server here
+    // For now, we'll simulate by creating object URLs
+    const newImageUrls = Array.from(files).map(file => URL.createObjectURL(file));
+    setImageUrls(prev => [...prev, ...newImageUrls]);
+    
+    setUploadingImage(false);
+  };
+  
+  // Function to remove an image
+  const removeImage = (indexToRemove: number) => {
+    setImageUrls(prev => prev.filter((_, i) => i !== indexToRemove));
+  };
+
   const handleFormSubmit = (data: InsertPin) => {
     data.activities = selectedActivities;
-    // Add a sample photo URL
-    data.photos = [
-      "https://images.unsplash.com/photo-1549144511-f099e773c147?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&h=800"
-    ];
+    data.photos = imageUrls;
     
     onAddPin(data);
     
@@ -130,6 +150,7 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
     });
     setSelectedActivities([]);
     setSelectedLocation(null);
+    setImageUrls([]);
     clearMarkers();
     
     // Re-add all pins to map
@@ -298,6 +319,59 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
                   </span>
                 ))}
               </div>
+            </div>
+            
+            {/* Photo Upload Section */}
+            <div className="space-y-3">
+              <FormLabel className="flex items-center gap-2">
+                <Camera className="h-4 w-4" />
+                Photos
+              </FormLabel>
+              
+              {/* Image Preview Grid */}
+              {imageUrls.length > 0 && (
+                <div className="grid grid-cols-3 gap-2 mb-3">
+                  {imageUrls.map((url, index) => (
+                    <div key={index} className="relative group aspect-square rounded-md overflow-hidden border border-neutral-200">
+                      <img src={url} alt={`Location image ${index + 1}`} className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute top-1 right-1 bg-white rounded-full p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="h-3 w-3 text-red-500" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {/* Upload Button */}
+              <div className="flex items-center">
+                <label htmlFor="photo-upload" className="flex items-center gap-2 px-3 py-2 rounded-md bg-neutral-100 hover:bg-neutral-200 cursor-pointer transition-colors">
+                  <ImageIcon className="h-4 w-4 text-neutral-700" />
+                  <span className="text-sm text-neutral-700">
+                    {imageUrls.length === 0 ? 'Add photos' : 'Add more photos'}
+                  </span>
+                </label>
+                <input
+                  id="photo-upload"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+                {uploadingImage && <span className="ml-3 text-sm text-neutral-500">Uploading...</span>}
+              </div>
+              
+              {imageUrls.length > 0 && (
+                <div className="text-xs text-neutral-500">
+                  <Badge variant="outline" className="font-normal">
+                    {imageUrls.length} photo{imageUrls.length !== 1 ? 's' : ''}
+                  </Badge>
+                </div>
+              )}
             </div>
 
             <div className="flex justify-end gap-4 pt-4">

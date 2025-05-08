@@ -3,6 +3,7 @@ import Layout from "@/components/Layout";
 import Explore from "@/pages/Explore";
 import CreateTrip from "@/pages/CreateTrip";
 import TripDetails from "@/pages/TripDetails";
+import EditTrip from "@/pages/EditTrip";
 import MyTrips from "@/pages/MyTrips";
 import NotFound from "@/pages/not-found";
 import { useQuery } from "@tanstack/react-query";
@@ -28,6 +29,7 @@ function App() {
         <Route path="/" component={Explore} />
         <Route path="/create" component={CreateTrip} />
         <Route path="/trip/:id" component={TripDetails} />
+        <Route path="/trip/:id/edit" component={EditTrip} />
         <Route path="/my-trips" component={MyTrips} />
         <Route component={NotFound} />
       </Switch>
