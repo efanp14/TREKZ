@@ -265,9 +265,13 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
                         type="date" 
                         className="w-full"
                         {...field}
-                        value={field.value instanceof Date 
-                          ? field.value.toISOString().split('T')[0] 
-                          : new Date(field.value).toISOString().split('T')[0]}
+                        value={
+                          field.value 
+                            ? (field.value instanceof Date 
+                                ? field.value.toISOString().split('T')[0] 
+                                : new Date(field.value).toISOString().split('T')[0]) 
+                            : new Date(trip.startDate).toISOString().split('T')[0]
+                        }
                       />
                     </div>
                   </FormControl>

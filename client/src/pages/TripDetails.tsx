@@ -24,22 +24,27 @@ const TripDetails = () => {
   const { toast } = useToast();
   const tripId = parseInt(id);
   
+  // Safely parse ID
+  const validTripId = !isNaN(tripId) ? tripId : 0;
+  
   // Fetch trip data
   const { 
     data: trip, 
     isLoading: tripLoading, 
     error: tripError 
   } = useQuery<Trip>({
-    queryKey: ['/api/trips', tripId],
+    queryKey: ['/api/trips', validTripId],
+    enabled: validTripId > 0,
   });
 
   // Fetch pins for this trip
   const { 
-    data: pins, 
+    data: pins = [], // Default to empty array for safety
     isLoading: pinsLoading 
   } = useQuery<Pin[]>({
-    queryKey: ['/api/trips', tripId, 'pins'],
-    // Removed the enabled condition to ensure pins are fetched regardless of trip status
+    queryKey: ['/api/trips', validTripId, 'pins'],
+    enabled: validTripId > 0,
+    staleTime: 0, // Always refresh
   });
 
   // Fetch user data
@@ -245,7 +250,7 @@ const TripDetails = () => {
                     </div>
                     <p className="text-sm text-neutral-600 mb-2 line-clamp-2">{pin.description}</p>
                     <div className="text-xs text-neutral-500">
-                      {format(new Date(pin.date), "MMM d, yyyy")}
+                      {pin.date ? format(new Date(pin.date), "MMM d, yyyy") : "Date not available"}
                     </div>
                   </div>
                 ))}
