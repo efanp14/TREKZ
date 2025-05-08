@@ -68,11 +68,13 @@ const Header = ({ user, activeTab }: HeaderProps) => {
         </div>
         <div className="flex items-center gap-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-yellow-mid h-4 w-4" />
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-6 h-6">
+              <Search className="text-yellow-mid h-4 w-4" />
+            </div>
             <input 
               type="text" 
               placeholder="Search destinations..." 
-              className="trekz-input pl-12 pr-4 py-2 rounded-full w-64 focus:ring-2 focus:ring-yellow-gold focus:outline-none transition-shadow cursor-pointer"
+              className="trekz-input pl-14 pr-4 py-2 rounded-full w-64 focus:ring-2 focus:ring-yellow-gold focus:outline-none transition-shadow cursor-pointer"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onClick={() => window.location.href = '/browser'}

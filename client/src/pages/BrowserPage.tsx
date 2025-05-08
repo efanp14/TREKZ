@@ -86,7 +86,9 @@ const BrowserPage = ({ user }: { user?: User }) => {
         
         <div className="max-w-3xl mx-auto mb-8 relative">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-yellow-mid h-5 w-5" />
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8">
+              <Search className="text-yellow-mid h-5 w-5" />
+            </div>
             <input
               ref={searchRef}
               type="text"
@@ -98,7 +100,7 @@ const BrowserPage = ({ user }: { user?: User }) => {
               onFocus={() => setShowSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
               placeholder="Search destinations, activities, or keywords..."
-              className="trekz-input pl-14 pr-4 py-3 rounded-full w-full text-lg focus:ring-2 focus:ring-yellow-gold focus:outline-none transition-shadow"
+              className="trekz-input pl-16 pr-4 py-3 rounded-full w-full text-lg focus:ring-2 focus:ring-yellow-gold focus:outline-none transition-shadow"
             />
             {showSuggestions && suggestions.length > 0 && (
               <div className="absolute z-10 mt-1 w-full bg-white rounded-xl shadow-lg border border-yellow-light">
