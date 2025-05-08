@@ -7,8 +7,12 @@ import { Pin, InsertPin } from "@shared/schema";
 export function useTripPins(tripId: number | undefined) {
   return useQuery<Pin[]>({
     queryKey: ['/api/trips', tripId, 'pins'],
-    queryFn: () => getPinsByTripId(tripId!),
-    enabled: !!tripId,
+    queryFn: () => {
+      if (!tripId) return Promise.resolve([]);
+      return getPinsByTripId(tripId);
+    },
+    // Always enable the query, but it will return an empty array if no tripId
+    enabled: true,
   });
 }
 

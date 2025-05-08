@@ -159,7 +159,9 @@ const TripDetails = () => {
               <div className="flex items-center gap-2 text-sm text-neutral-600">
                 <Calendar className="h-4 w-4 text-primary-500" />
                 <span>
-                  {format(new Date(trip?.startDate || new Date()), "MMM d")} - {format(new Date(trip?.endDate || new Date()), "MMM d, yyyy")}
+                  {trip?.startDate && trip?.endDate ? 
+                    `${format(new Date(trip.startDate), "MMM d")} - ${format(new Date(trip.endDate), "MMM d, yyyy")}` : 
+                    "Date not available"}
                 </span>
               </div>
               
