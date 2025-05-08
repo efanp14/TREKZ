@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { Plus, Map } from "lucide-react";
+import heroImage from "../assets/images/hero-image.png";
 
 const HeroSection = () => {
   return (
@@ -36,9 +37,9 @@ const HeroSection = () => {
               <div className="absolute -top-14 -right-14 w-60 h-60 bg-yellow-light rounded-full opacity-20"></div>
               <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-mint-light rounded-full opacity-20"></div>
               <img 
-                src="https://images.unsplash.com/photo-1516546453174-5e1098a4b4af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400" 
-                alt="Travel map with pins" 
-                className="w-80 h-80 object-cover rounded-2xl shadow-lg relative z-10 border-4 border-white-soft"
+                src={heroImage} 
+                alt="TREKZ adventure map" 
+                className="w-96 h-96 object-contain rounded-2xl shadow-lg relative z-10 border-4 border-white-soft bg-white/80"
               />
             </div>
           </div>
