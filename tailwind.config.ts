@@ -44,13 +44,18 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        // New theme colors
+        // New theme colors from the image
         "yellow-light": "hsl(var(--yellow-light))",
         "yellow-mid": "hsl(var(--yellow-mid))",
         "yellow-deep": "hsl(var(--yellow-deep))",
+        "yellow-gold": "hsl(var(--yellow-gold))",
         "mint-light": "hsl(var(--mint-light))",
         "mint-mid": "hsl(var(--mint-mid))",
         "mint-deep": "hsl(var(--mint-deep))",
+        "cream": "hsl(var(--cream))",
+        "white-soft": "hsl(var(--white-soft))",
+        "blue-pastel": "hsl(var(--blue-pastel))",
+        "pattern-beige": "hsl(var(--pattern-beige))",
         chart: {
           "1": "hsl(var(--chart-1))",
           "2": "hsl(var(--chart-2))",

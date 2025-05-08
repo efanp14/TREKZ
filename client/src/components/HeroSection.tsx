@@ -1,29 +1,46 @@
 import { Link } from "wouter";
-import { Plus } from "lucide-react";
+import { Plus, Map } from "lucide-react";
 
 const HeroSection = () => {
   return (
     <div className="px-4 py-6 md:px-8 md:py-8">
-      <div className="relative overflow-hidden rounded-2xl">
-        <img 
-          src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&h=600" 
-          alt="Mountain panorama" 
-          className="w-full h-64 md:h-80 object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-neutral-900/70 to-neutral-900/30 flex items-center">
-          <div className="px-6 md:px-10 max-w-2xl">
-            <h1 className="text-2xl md:text-4xl text-white font-heading font-bold mb-4">
-              Discover and Share Your Travel Adventures
-            </h1>
-            <p className="text-white/90 text-sm md:text-base mb-6">
-              Create interactive maps of your journeys, share photos, and inspire others with your travel stories.
-            </p>
-            <Link href="/create">
-              <div className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2 inline-flex cursor-pointer">
-                <Plus className="h-5 w-5" />
-                Create New Trip
+      <div className="hero-gradient relative overflow-hidden rounded-2xl">
+        <div className="diamond-overlay relative z-10 py-20 md:py-24">
+          <div className="hero-content container mx-auto px-6 md:px-10 flex flex-col md:flex-row items-center gap-8">
+            <div className="max-w-xl">
+              <div className="mb-3 inline-block bg-yellow-light px-4 py-1 rounded-full">
+                <span className="text-sm font-medium">Share Your Adventures</span>
               </div>
-            </Link>
+              <h1 className="text-3xl md:text-5xl trekz-logo mb-4">
+                Map Your Journey with <span className="text-yellow-gold">Trekz</span>
+              </h1>
+              <p className="text-foreground/80 text-base md:text-lg mb-8">
+                Create interactive maps of your journeys, share photos, and inspire others with your travel adventures.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link href="/create">
+                  <div className="button-primary px-6 py-3 rounded-lg flex items-center gap-2 inline-flex cursor-pointer">
+                    <Plus className="h-5 w-5" />
+                    Create New Trip
+                  </div>
+                </Link>
+                <Link href="/explore">
+                  <div className="button-secondary px-6 py-3 rounded-lg flex items-center gap-2 inline-flex cursor-pointer">
+                    <Map className="h-5 w-5" />
+                    Explore Trips
+                  </div>
+                </Link>
+              </div>
+            </div>
+            <div className="hidden md:block relative">
+              <div className="absolute -top-14 -right-14 w-60 h-60 bg-yellow-light rounded-full opacity-20"></div>
+              <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-mint-light rounded-full opacity-20"></div>
+              <img 
+                src="https://images.unsplash.com/photo-1516546453174-5e1098a4b4af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400" 
+                alt="Travel map with pins" 
+                className="w-80 h-80 object-cover rounded-2xl shadow-lg relative z-10 border-4 border-white-soft"
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -7,15 +7,22 @@
   --background: 60 30% 98%;
   --foreground: 45 10% 20%;
   
-  /* Pastel yellow */
-  --yellow-light: 48 80% 85%;
-  --yellow-mid: 48 75% 75%;
-  --yellow-deep: 45 70% 65%;
+  /* Pastel yellow from image */
+  --yellow-light: 48 80% 88%;
+  --yellow-mid: 48 75% 80%;
+  --yellow-deep: 42 70% 75%;
+  --yellow-gold: 45 90% 70%;
   
-  /* Mint green */
-  --mint-light: 165 40% 85%;
-  --mint-mid: 165 35% 75%;
-  --mint-deep: 162 30% 65%;
+  /* Mint green from image */
+  --mint-light: 165 45% 88%;
+  --mint-mid: 170 40% 80%;
+  --mint-deep: 175 35% 70%;
+  
+  /* Additional colors from image */
+  --cream: 40 30% 95%;
+  --white-soft: 0 0% 100%;
+  --blue-pastel: 190 40% 85%;
+  --pattern-beige: 45 50% 88%;
   
   /* UI Elements */
   --muted: 48 30% 95%;
@@ -83,20 +90,20 @@
   }
 }
 
-/* Custom patterns and backgrounds */
+/* Custom patterns and backgrounds inspired by the image */
 .diamond-pattern {
-  background-color: hsl(var(--yellow-light));
+  background-color: hsl(var(--pattern-beige));
   background-image: 
     linear-gradient(45deg, hsl(var(--yellow-mid)) 25%, transparent 25%, transparent 75%, hsl(var(--yellow-mid)) 75%, hsl(var(--yellow-mid))), 
     linear-gradient(45deg, hsl(var(--yellow-mid)) 25%, transparent 25%, transparent 75%, hsl(var(--yellow-mid)) 75%, hsl(var(--yellow-mid)));
   background-size: 40px 40px;
   background-position: 0 0, 20px 20px;
-  opacity: 0.4;
+  opacity: 0.8;
 }
 
 .gradient-bg-yellow-mint {
   background: linear-gradient(135deg, hsl(var(--yellow-light)) 0%, hsl(var(--mint-light)) 100%);
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .gradient-bg-mint {
@@ -107,23 +114,57 @@
   background: linear-gradient(45deg, hsl(var(--yellow-deep)) 0%, hsl(var(--yellow-light)) 100%);
 }
 
-/* Custom component styling */
+.waves-pattern {
+  background: linear-gradient(135deg, 
+    hsla(var(--yellow-light), 0.4) 25%, 
+    hsla(var(--mint-light), 0.4) 50%,
+    hsla(var(--yellow-light), 0.4) 75%);
+  background-size: 300% 300%;
+  animation: wave-motion 15s ease infinite;
+}
+
+@keyframes wave-motion {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.radio-pattern {
+  background-color: hsl(var(--yellow-gold));
+  background-image: radial-gradient(hsl(var(--mint-light)) 10%, transparent 11%),
+                    radial-gradient(hsl(var(--mint-light)) 10%, transparent 11%);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px;
+  opacity: 0.3;
+}
+
+/* Custom component styling with updated colors */
 .card {
-  @apply border border-border bg-card text-card-foreground shadow-sm;
+  background-color: hsl(var(--white-soft));
+  border-color: hsl(var(--yellow-light));
+  @apply shadow-sm text-card-foreground rounded-lg overflow-hidden;
 }
 
 .button-primary {
-  @apply bg-primary text-primary-foreground transition-colors;
+  background-color: hsl(var(--yellow-gold));
+  @apply text-primary-foreground font-medium transition-all;
+  box-shadow: 0 2px 10px rgba(235, 199, 105, 0.3);
 }
 .button-primary:hover {
   background-color: hsl(var(--yellow-deep));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(235, 199, 105, 0.4);
 }
 
 .button-secondary {
-  @apply bg-secondary text-secondary-foreground transition-colors;
+  background-color: hsl(var(--mint-mid));
+  @apply text-secondary-foreground font-medium transition-all;
+  box-shadow: 0 2px 10px rgba(157, 221, 210, 0.3);
 }
 .button-secondary:hover {
-  background-color: hsl(var(--mint-mid));
+  background-color: hsl(var(--mint-deep));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(157, 221, 210, 0.4);
 }
 
 .navbar {
@@ -133,7 +174,34 @@
 
 .tag {
   background-color: hsl(var(--yellow-light));
-  @apply text-foreground text-xs px-2 py-1 rounded-full;
+  @apply text-foreground text-xs px-2.5 py-1 rounded-full font-medium;
+  border: 1px solid hsl(var(--yellow-mid));
+}
+
+/* Trekz branding elements */
+.trekz-logo {
+  font-family: 'Montserrat', sans-serif;
+  @apply font-bold text-foreground;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  letter-spacing: -0.5px;
+}
+
+.trekz-card {
+  @apply rounded-xl overflow-hidden bg-white-soft;
+  border: 1px solid hsl(var(--yellow-light));
+  box-shadow: 0 4px 12px rgba(235, 199, 105, 0.12);
+  transition: all 0.2s ease;
+}
+
+.trekz-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(235, 199, 105, 0.18);
+}
+
+.trekz-input {
+  @apply border rounded-lg px-3 py-2;
+  background-color: hsl(var(--white-soft));
+  border-color: hsl(var(--yellow-light));
 }
 
 /* Special background for featured items */
@@ -149,16 +217,60 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, hsl(var(--yellow-light)) 0%, hsl(var(--mint-light)) 100%);
+  background: linear-gradient(135deg, 
+    hsl(var(--yellow-light)) 0%, 
+    hsl(var(--mint-light)) 50%,
+    hsl(var(--blue-pastel)) 100%
+  );
   opacity: 0.2;
   z-index: -1;
 }
 
-/* Hero section gradient */
+/* Hero section styles */
 .hero-gradient {
+  position: relative;
   background: linear-gradient(135deg, 
-    rgba(254, 249, 231, 0.9) 0%,
-    rgba(240, 246, 245, 0.9) 50%,
-    rgba(220, 241, 235, 0.9) 100%
+    hsla(var(--yellow-light), 0.9) 0%,
+    hsla(var(--cream), 0.9) 50%,
+    hsla(var(--mint-light), 0.9) 100%
   );
+}
+
+.hero-gradient::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 30%, hsla(var(--yellow-mid), 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, hsla(var(--mint-mid), 0.15) 0%, transparent 50%);
+  z-index: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Diamond pattern overlay for special sections */
+.diamond-overlay {
+  position: relative;
+}
+
+.diamond-overlay::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(45deg, hsla(var(--pattern-beige), 0.1) 25%, transparent 25%, transparent 75%, hsla(var(--pattern-beige), 0.1) 75%, hsla(var(--pattern-beige), 0.1)),
+    linear-gradient(45deg, hsla(var(--pattern-beige), 0.1) 25%, transparent 25%, transparent 75%, hsla(var(--pattern-beige), 0.1) 75%, hsla(var(--pattern-beige), 0.1));
+  background-size: 50px 50px;
+  background-position: 0 0, 25px 25px;
+  z-index: -1;
+  opacity: 0.5;
 }
