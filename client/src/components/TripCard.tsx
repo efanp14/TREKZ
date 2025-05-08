@@ -34,7 +34,7 @@ const TripCard = ({ trip, showDate = "range" }: TripCardProps) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer block">
+    <div className="trekz-card bg-white-soft transition-all duration-300">
       <Link href={`/trip/${trip.id}`}>
         <div className="relative">
           <img 
@@ -42,11 +42,15 @@ const TripCard = ({ trip, showDate = "range" }: TripCardProps) => {
             alt={trip.title} 
             className="w-full h-48 object-cover"
           />
-          <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-medium text-neutral-800">
-            <MapPin className="inline-block h-3 w-3 text-primary-500 mr-1" />
+          <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-black/50 to-transparent" />
+          <div className="absolute top-3 right-3 bg-yellow-light border border-yellow-mid backdrop-blur-sm rounded-full px-3 py-1 text-xs font-medium">
+            <MapPin className="inline-block h-3 w-3 text-yellow-gold mr-1" />
             <span>
               {Math.floor(Math.random() * 10) + 2} locations
             </span>
+          </div>
+          <div className="absolute bottom-3 left-3">
+            <h3 className="font-heading font-bold text-white text-lg">{trip.title}</h3>
           </div>
         </div>
         <div className="p-4">
@@ -55,24 +59,27 @@ const TripCard = ({ trip, showDate = "range" }: TripCardProps) => {
               <img 
                 src={user.avatar || ''} 
                 alt="User avatar" 
-                className="w-6 h-6 rounded-full object-cover"
+                className="w-6 h-6 rounded-full object-cover border border-yellow-light"
               />
-              <span className="text-sm text-neutral-600">{user.name}</span>
+              <span className="text-sm font-medium">{user.name}</span>
             </div>
           )}
-          <h3 className="font-heading font-semibold text-neutral-800 mb-1">{trip.title}</h3>
-          <p className="text-sm text-neutral-600 mb-3 line-clamp-2">{trip.summary}</p>
-          <div className="flex items-center text-xs text-neutral-500">
-            {renderDate()}
-            <span className="mx-2">•</span>
-            <div className="flex items-center">
-              <Eye className="h-3 w-3 mr-1" />
-              {trip.viewCount > 1000 ? (trip.viewCount / 1000).toFixed(1) + "K" : trip.viewCount}
+          <p className="text-sm text-foreground/80 mb-3 line-clamp-2">{trip.summary}</p>
+          
+          <div className="flex items-center justify-between">
+            <div className="text-xs bg-cream px-2 py-1 rounded-md text-foreground/70 font-medium">
+              {renderDate()}
             </div>
-            <span className="mx-2">•</span>
-            <div className="flex items-center">
-              <Heart className="h-3 w-3 mr-1" />
-              {trip.likeCount}
+            
+            <div className="flex items-center gap-3 text-xs">
+              <div className="flex items-center text-foreground/70">
+                <Eye className="h-3 w-3 mr-1 text-yellow-gold" />
+                {trip.viewCount > 1000 ? (trip.viewCount / 1000).toFixed(1) + "K" : trip.viewCount}
+              </div>
+              <div className="flex items-center text-foreground/70">
+                <Heart className="h-3 w-3 mr-1 text-yellow-gold" />
+                {trip.likeCount}
+              </div>
             </div>
           </div>
         </div>

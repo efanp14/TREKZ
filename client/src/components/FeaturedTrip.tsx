@@ -75,37 +75,40 @@ const FeaturedTrip = ({ trip, pins, isLoading = false }: FeaturedTripProps) => {
   return (
     <div className="px-4 md:px-8 mb-8">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-heading font-bold text-neutral-800">Featured Trip</h2>
+        <div className="flex items-center">
+          <div className="h-10 w-2 bg-yellow-gold rounded-full mr-3"></div>
+          <h2 className="text-xl trekz-logo text-foreground">Featured <span className="text-yellow-gold">Adventure</span></h2>
+        </div>
       </div>
       
-      <div className="bg-white rounded-xl shadow overflow-hidden">
-        <div className="md:flex">
-          <div className="md:w-1/2 h-64 md:h-auto">
+      <div className="trekz-card featured-bg bg-white-soft">
+        <div className="diamond-overlay md:flex">
+          <div className="md:w-1/2 h-72 md:h-auto">
             {isLoading ? (
-              <div className="h-full flex items-center justify-center bg-neutral-50">
-                <Loader className="h-8 w-8 text-neutral-400 animate-spin" />
+              <div className="h-full flex items-center justify-center bg-cream">
+                <Loader className="h-8 w-8 text-yellow-mid animate-spin" />
               </div>
             ) : pins.length > 0 ? (
               // Use the MapView component for a proper interactive map
-              <div className="h-full relative rounded-tl-xl rounded-tr-xl md:rounded-tr-none md:rounded-bl-xl overflow-hidden">
+              <div className="h-full relative rounded-t-xl md:rounded-tr-none md:rounded-l-xl overflow-hidden border-r border-yellow-light">
                 <MapView trip={trip} pins={pins} />
               </div>
             ) : (
               // Fallback to static image if no pins
               <div 
-                className="h-full bg-cover bg-center" 
+                className="h-full bg-cover bg-center rounded-t-xl md:rounded-tr-none md:rounded-l-xl border-r border-yellow-light" 
                 style={{ 
-                  backgroundImage: `url('${trip.coverImage || "https://via.placeholder.com/800x600?text=No+Map+Data"}')`
+                  backgroundImage: `url('${trip.coverImage || "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=500"}')`
                 }}
               ></div>
             )}
           </div>
           
-          <div className="md:w-1/2 p-5 md:p-6">
-            <div className="flex items-center justify-between mb-3">
+          <div className="md:w-1/2 p-5 md:p-6 bg-white-soft">
+            <div className="flex items-center justify-between mb-4">
               {user && (
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
+                  <div className="w-10 h-10 rounded-full bg-yellow-light border-2 border-yellow-mid flex items-center justify-center overflow-hidden">
                     {user.avatar ? (
                       <img 
                         src={user.avatar} 
@@ -113,47 +116,53 @@ const FeaturedTrip = ({ trip, pins, isLoading = false }: FeaturedTripProps) => {
                         className="w-full h-full rounded-full object-cover"
                       />
                     ) : (
-                      <span className="font-medium text-sm">{user.name.charAt(0).toUpperCase()}</span>
+                      <span className="font-medium text-foreground">{user.name.charAt(0).toUpperCase()}</span>
                     )}
                   </div>
                   <div>
-                    <div className="font-medium text-neutral-800">{user.name}</div>
-                    <div className="text-xs text-neutral-500">Travel Enthusiast</div>
+                    <div className="font-medium text-foreground">{user.name}</div>
+                    <div className="text-xs text-foreground/70">Travel Enthusiast</div>
                   </div>
                 </div>
               )}
               
-              <div className="flex gap-1">
+              <div className="flex gap-2">
                 <button 
-                  className="p-2 rounded-full hover:bg-neutral-100 text-neutral-600"
+                  className="p-2 rounded-full bg-yellow-light hover:bg-yellow-mid transition-colors"
                   onClick={handleLike}
                 >
-                  <Heart className="h-5 w-5" />
+                  <Heart className="h-5 w-5 text-foreground" />
                 </button>
                 <button 
-                  className="p-2 rounded-full hover:bg-neutral-100 text-neutral-600"
+                  className="p-2 rounded-full bg-mint-light hover:bg-mint-mid transition-colors"
                   onClick={handleShare}
                 >
-                  <Share2 className="h-5 w-5" />
+                  <Share2 className="h-5 w-5 text-foreground" />
                 </button>
               </div>
             </div>
             
-            <h2 className="text-xl font-heading font-bold text-neutral-800 mb-2">{trip.title}</h2>
-            <p className="text-sm text-neutral-600 mb-4">{trip.summary}</p>
+            <h2 className="text-2xl trekz-logo text-foreground mb-3">{trip.title}</h2>
+            <p className="text-sm text-foreground/80 mb-4">{trip.summary}</p>
             
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-wrap gap-2 mb-5">
               {trip.categories?.map((category, index) => (
-                <span key={index} className="bg-neutral-100 text-neutral-700 text-xs px-3 py-1 rounded-full">
+                <span key={index} className="tag">
                   {category}
                 </span>
               ))}
+              {!trip.categories?.length && (
+                <span className="tag">Adventure</span>
+              )}
             </div>
             
-            <div className="border-t border-neutral-200 pt-4 mb-4">
-              <div className="flex items-center justify-between text-sm mb-2">
-                <div className="font-medium text-neutral-800">Trip Timeline</div>
-                <div className="text-neutral-500">
+            <div className="border-t border-yellow-light pt-4 mb-5">
+              <div className="flex items-center justify-between text-sm mb-3">
+                <div className="font-medium text-foreground flex items-center">
+                  <span className="inline-block w-2 h-2 bg-yellow-gold rounded-full mr-2"></span>
+                  Adventure Timeline
+                </div>
+                <div className="text-foreground/70 bg-cream px-2 py-1 rounded-md text-xs">
                   {formattedDateRange}
                 </div>
               </div>
@@ -161,14 +170,14 @@ const FeaturedTrip = ({ trip, pins, isLoading = false }: FeaturedTripProps) => {
               {pins.length > 0 ? (
                 <TripTimeline pins={pins} />
               ) : (
-                <div className="py-4 text-sm text-center text-neutral-500">
+                <div className="py-4 text-sm text-center text-foreground/70 bg-cream/50 rounded-lg">
                   No locations have been added to this trip yet.
                 </div>
               )}
             </div>
             
             <Link href={`/trip/${trip.id}`}>
-              <span className="w-full bg-primary-500 hover:bg-primary-600 text-white py-2.5 rounded-lg font-medium transition-colors flex justify-center cursor-pointer">
+              <span className="w-full button-primary py-3 rounded-lg font-medium flex justify-center cursor-pointer">
                 View Full Trip Details
               </span>
             </Link>
