@@ -4,6 +4,9 @@ import TrendingTrips from "@/components/TrendingTrips";
 import FeaturedTrip from "@/components/FeaturedTrip";
 import RecentlyShared from "@/components/RecentlyShared";
 import { Trip, Pin } from "@shared/schema";
+import { getTripById, getPinsByTripId } from "@/lib/api";
+
+const FEATURED_TRIP_ID = 16; // Italy Trip
 
 const Explore = () => {
   // Fetch trending trips
@@ -16,24 +19,21 @@ const Explore = () => {
     queryKey: ['/api/recent'],
   });
 
-  // Fetch all trips to find a featured one
-  const { data: trips } = useQuery<Trip[]>({
-    queryKey: ['/api/trips'],
+  // Fetch the specific featured trip (Italy Trip)
+  const { data: featuredTrip, isLoading: tripLoading } = useQuery<Trip>({
+    queryKey: ['/api/trips', FEATURED_TRIP_ID],
+    queryFn: () => getTripById(FEATURED_TRIP_ID),
   });
-
-  // Find a suitable featured trip that has a good description and cover image
-  const featuredTrip = trips?.find(trip => 
-    trip.summary && 
-    trip.summary.length > 50 && 
-    trip.coverImage && 
-    trip.coverImage.length > 0
-  );
   
   // Fetch pins for the featured trip
   const { data: featuredTripPins, isLoading: pinsLoading } = useQuery<Pin[]>({
-    queryKey: ['/api/trips', featuredTrip?.id, 'pins'],
-    enabled: !!featuredTrip?.id,
+    queryKey: ['/api/trips', FEATURED_TRIP_ID, 'pins'],
+    queryFn: () => getPinsByTripId(FEATURED_TRIP_ID),
+    enabled: !!featuredTrip,
   });
+
+  // Loading state for featured trip section
+  const isFeaturedLoading = tripLoading || pinsLoading;
 
   return (
     <div className="flex-grow overflow-auto">
@@ -48,7 +48,7 @@ const Explore = () => {
         <FeaturedTrip 
           trip={featuredTrip} 
           pins={featuredTripPins || []} 
-          isLoading={pinsLoading}
+          isLoading={isFeaturedLoading}
         />
       )}
       
