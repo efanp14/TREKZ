@@ -1,13 +1,12 @@
 import { Link } from "wouter";
 import { Plus, Map } from "lucide-react";
-import heroImage from "../assets/images/hero-image.png";
 
 const HeroSection = () => {
   return (
     <div className="px-4 py-6 md:px-8 md:py-8">
       <div className="hero-gradient relative overflow-hidden rounded-2xl">
         <div className="diamond-overlay relative z-10 py-20 md:py-24">
-          <div className="hero-content container mx-auto px-6 md:px-10 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="hero-content container mx-auto px-6 md:px-10 flex flex-col md:flex-row items-center gap-8">
             <div className="max-w-xl">
               <div className="mb-3 inline-block bg-yellow-light px-4 py-1 rounded-full">
                 <span className="text-sm font-medium">Share Your Adventures</span>
@@ -36,14 +35,11 @@ const HeroSection = () => {
             <div className="hidden md:block relative">
               <div className="absolute -top-14 -right-14 w-60 h-60 bg-yellow-light rounded-full opacity-20"></div>
               <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-mint-light rounded-full opacity-20"></div>
-              <div className="w-[600px] h-60 rounded-2xl shadow-lg relative z-10 border-4 border-yellow-light bg-gradient-to-r from-white/90 to-yellow-light/20 overflow-hidden flex items-center justify-center p-2">
-                <img 
-                  src={heroImage} 
-                  alt="TREKZ adventure map" 
-                  className="w-full h-auto max-h-full object-contain"
-                  style={{ filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.5))' }}
-                />
-              </div>
+              <img 
+                src="https://images.unsplash.com/photo-1516546453174-5e1098a4b4af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&h=400" 
+                alt="Travel map with pins" 
+                className="w-80 h-80 object-cover rounded-2xl shadow-lg relative z-10 border-4 border-white-soft"
+              />
             </div>
           </div>
         </div>
