@@ -28,9 +28,9 @@ const Header = ({ user, activeTab }: HeaderProps) => {
                 <img 
                   src={trekzLogo} 
                   alt="Trekz logo" 
-                  className="h-20 w-20 object-contain mr-1" 
+                  className="h-24 w-24 object-contain mr-1" 
                 />
-                <h1 className="text-xl trekz-logo -ml-1 text-foreground">
+                <h1 className="text-xl font-heading -ml-1 text-foreground">
                   <span className="font-bold">Trekz</span>
                 </h1>
               </div>
@@ -100,9 +100,9 @@ const Header = ({ user, activeTab }: HeaderProps) => {
               <img 
                 src={trekzLogo} 
                 alt="Trekz logo" 
-                className="h-16 w-16 object-contain" 
+                className="h-20 w-20 object-contain" 
               />
-              <h1 className="text-lg trekz-logo -ml-1">
+              <h1 className="text-lg font-heading -ml-1">
                 <span className="font-bold">Trekz</span>
               </h1>
             </div>
