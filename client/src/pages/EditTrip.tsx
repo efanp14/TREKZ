@@ -112,9 +112,6 @@ const EditTrip = () => {
     mutationFn: async (data: InsertTrip) => {
       const response = await apiRequest(`/api/trips/${validTripId}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
         body: JSON.stringify(data),
       });
       return response.json();
@@ -142,9 +139,6 @@ const EditTrip = () => {
     mutationFn: async ({ pinId, data }: { pinId: number; data: Partial<InsertPin> }) => {
       const response = await apiRequest(`/api/pins/${pinId}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
         body: JSON.stringify(data),
       });
       return response.json();
@@ -164,9 +158,6 @@ const EditTrip = () => {
     mutationFn: async (pinId: number) => {
       await apiRequest(`/api/pins/${pinId}`, {
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        }
       });
     },
     onSuccess: () => {
@@ -409,11 +400,7 @@ const EditTrip = () => {
                             <FormItem>
                               <FormLabel>Cover Image URL</FormLabel>
                               <FormControl>
-                                <Input 
-                                  {...field} 
-                                  placeholder="https://example.com/image.jpg"
-                                  value={field.value || ''}
-                                />
+                                <Input {...field} placeholder="https://example.com/image.jpg" />
                               </FormControl>
                               <FormMessage />
                               {field.value && (
