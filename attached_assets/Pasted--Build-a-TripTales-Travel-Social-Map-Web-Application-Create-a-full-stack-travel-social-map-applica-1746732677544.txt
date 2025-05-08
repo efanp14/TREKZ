@@ -1,0 +1,49 @@
+# Build a TripTales Travel Social Map Web Application
+Create a full-stack travel social map application called "TripTales" where users can create, share, and discover travel experiences through interactive maps and visual storytelling.
+## Core Features
+1. Interactive map interface using Mapbox
+2. Trip creation with multiple location pins
+3. Photo uploads for each location
+4. Trip timeline visualization
+5. Public trip sharing and discovery
+6. Trending trips section
+## Technical Requirements
+### Backend (Node.js with Express)
+- Implement a RESTful API
+- Create an in-memory storage system for development (no database required)
+- Include a default test user - no authentication system needed
+### Frontend (React)
+- Modern React with hooks
+- Map integration with Mapbox GL JS
+- TanStack Query for data fetching
+- React Hook Form for form management
+- Responsive design with Tailwind CSS
+- Shadcn UI components
+### Data Models
+- Users: Basic profile info (name, username, bio)
+- Trips: Title, summary, dates, visibility settings
+- Pins: Location data, photos, descriptions, order in trip
+### Routes & Endpoints
+- `/api/trips` - CRUD operations for trips
+- `/api/pins` - CRUD operations for pins
+- `/api/trending` - Get trending trips
+- `/api/auth/me` - Get current user (simplified to always return default user)
+### Simplified Authentication
+- Create a default test user
+- No login/signup screens needed
+- All requests use the default user
+### Map Integration
+- Interactive Mapbox maps
+- Pin placement on maps
+- Route visualization between pins
+- Custom pin styling
+### Design Requirements
+- Clean, modern UI with Tailwind
+- Mobile-responsive design
+- Blue color scheme
+- Trip cards with preview images
+### Project Structure
+- Clear separation of client and server code
+- Component-based architecture
+- Shared type definitions for client and server
+Development should focus on core functionality first, with authentication being simplified to a single default user to accelerate development.
