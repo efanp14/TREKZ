@@ -111,11 +111,17 @@ const FeaturedTrip = ({ trip, pins }: FeaturedTripProps) => {
             <div className="flex items-center justify-between mb-3">
               {user && (
                 <div className="flex items-center gap-2">
-                  <img 
-                    src={user.avatar} 
-                    alt="User avatar" 
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
+                  <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
+                    {user.avatar ? (
+                      <img 
+                        src={user.avatar} 
+                        alt={user.name} 
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="font-medium text-sm">{user.name.charAt(0).toUpperCase()}</span>
+                    )}
+                  </div>
                   <div>
                     <div className="font-medium text-neutral-800">{user.name}</div>
                     <div className="text-xs text-neutral-500">Travel Enthusiast</div>
@@ -162,9 +168,9 @@ const FeaturedTrip = ({ trip, pins }: FeaturedTripProps) => {
             </div>
             
             <Link href={`/trip/${trip.id}`}>
-              <a className="w-full bg-primary-500 hover:bg-primary-600 text-white py-2.5 rounded-lg font-medium transition-colors flex justify-center">
+              <span className="w-full bg-primary-500 hover:bg-primary-600 text-white py-2.5 rounded-lg font-medium transition-colors flex justify-center cursor-pointer">
                 View Full Trip Details
-              </a>
+              </span>
             </Link>
           </div>
         </div>
