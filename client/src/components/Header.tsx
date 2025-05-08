@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { User } from "@shared/schema";
-import { MapPin, Search, Map, Globe } from "lucide-react";
+import { Search, Map } from "lucide-react";
+import trekzLogo from "../assets/trekz-logo.png";
 
 interface HeaderProps {
   user?: User;
@@ -24,7 +25,11 @@ const Header = ({ user, activeTab }: HeaderProps) => {
           <div className="flex items-center gap-2">
             <Link href="/">
               <div className="flex items-center cursor-pointer">
-                <Globe className="text-yellow-gold h-6 w-6" />
+                <img 
+                  src={trekzLogo} 
+                  alt="Trekz logo" 
+                  className="h-8 w-8 object-contain" 
+                />
                 <h1 className="text-xl trekz-logo ml-2 text-foreground">
                   <span className="font-bold">Trekz</span>
                 </h1>
@@ -92,7 +97,11 @@ const Header = ({ user, activeTab }: HeaderProps) => {
         <div className="flex items-center gap-2">
           <Link href="/">
             <div className="flex items-center cursor-pointer">
-              <Globe className="text-yellow-gold h-5 w-5" />
+              <img 
+                src={trekzLogo} 
+                alt="Trekz logo" 
+                className="h-7 w-7 object-contain" 
+              />
               <h1 className="text-lg trekz-logo ml-1.5">
                 <span className="font-bold">Trekz</span>
               </h1>
