@@ -14,12 +14,24 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { initMap, addMarker, clearMarkers } from "@/lib/mapbox";
+import { 
+  initMap, 
+  addMarker, 
+  clearMarkers, 
+  searchLocations, 
+  flyToLocation, 
+  panToPin,
+  type CitySearchResult 
+} from "@/lib/mapbox";
 import { format } from "date-fns";
-import { MapPin, Plus, Calendar, CheckCircle2, Camera, X, Image as ImageIcon } from "lucide-react";
+import { 
+  MapPin, Plus, Calendar, CheckCircle2, Camera, X, 
+  Image as ImageIcon, Search, MapPinned
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import TripTimeline from "./TripTimeline";
 import { Badge } from "@/components/ui/badge";
+import { useDebounce } from "@/hooks/use-debounce";
 
 interface PinEditorProps {
   trip: Trip;
@@ -55,6 +67,13 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
   const [selectedLocation, setSelectedLocation] = useState<{ lng: number; lat: number } | null>(null);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
+  
+  // City search state
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+  const [citySuggestions, setCitySuggestions] = useState<CitySearchResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   
   const form = useForm<InsertPin>({
     resolver: zodResolver(pinFormSchema),

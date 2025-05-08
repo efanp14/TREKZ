@@ -1,5 +1,13 @@
 import mapboxgl from 'mapbox-gl';
 
+// Define interface for city suggestion response
+export interface CitySearchResult {
+  name: string;
+  fullName: string;
+  location: [number, number]; // [longitude, latitude]
+  id: string;
+}
+
 // Disable telemetry/events calls to prevent pending network requests
 // The correct way to disable Mapbox telemetry in newer versions
 try {
@@ -118,5 +126,61 @@ export function createRoute(map: mapboxgl.Map, coordinates: [number, number][]):
         'line-opacity': 0.7
       }
     });
+  }
+}
+
+// FlyTo a specific location with smooth animation
+export function flyToLocation(map: mapboxgl.Map, location: [number, number], zoom: number = 9, options?: any): void {
+  map.flyTo({
+    center: location,
+    zoom,
+    essential: true, // This animation is considered essential for the intended user experience
+    duration: 2000, // Animation duration in milliseconds
+    ...options
+  });
+}
+
+// Pan to a pin location
+export function panToPin(map: mapboxgl.Map, location: [number, number], zoom?: number): void {
+  map.panTo(location);
+  if (zoom) {
+    map.setZoom(zoom);
+  }
+}
+
+// Search for locations using Mapbox Geocoding API
+export async function searchLocations(query: string, limit: number = 5): Promise<CitySearchResult[]> {
+  if (!query.trim()) {
+    return [];
+  }
+  
+  try {
+    // Set up Mapbox Geocoding API URL (place types: locality, place, region focus on cities and regions)
+    const endpoint = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json`;
+    const params = new URLSearchParams({
+      access_token: mapboxgl.accessToken as string,
+      types: 'place,locality,region', // Focus on cities and regions
+      limit: limit.toString(),
+      language: 'en', // Could be made dynamic for internationalization
+    });
+    
+    const response = await fetch(`${endpoint}?${params}`);
+    
+    if (!response.ok) {
+      throw new Error('Geocoding API request failed');
+    }
+    
+    const data = await response.json();
+    
+    // Format the response data into our CitySearchResult format
+    return data.features.map((feature: any) => ({
+      id: feature.id,
+      name: feature.text,
+      fullName: feature.place_name,
+      location: feature.center as [number, number],
+    }));
+  } catch (error) {
+    console.error('Error searching for locations:', error);
+    return [];
   }
 }
