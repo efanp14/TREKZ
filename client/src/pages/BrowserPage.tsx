@@ -98,7 +98,7 @@ const BrowserPage = ({ user }: { user?: User }) => {
               onFocus={() => setShowSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
               placeholder="Search destinations, activities, or keywords..."
-              className="trekz-input pl-12 pr-4 py-3 rounded-full w-full text-lg focus:ring-2 focus:ring-yellow-gold focus:outline-none transition-shadow"
+              className="trekz-input pl-14 pr-4 py-3 rounded-full w-full text-lg focus:ring-2 focus:ring-yellow-gold focus:outline-none transition-shadow"
             />
             {showSuggestions && suggestions.length > 0 && (
               <div className="absolute z-10 mt-1 w-full bg-white rounded-xl shadow-lg border border-yellow-light">
