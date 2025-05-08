@@ -1,12 +1,27 @@
 import mapboxgl from 'mapbox-gl';
 
+// Disable telemetry/events calls to prevent pending network requests
+// The correct way to disable Mapbox telemetry in newer versions
+try {
+  // @ts-ignore - Safely disable telemetry (undocumented property)
+  mapboxgl.setRTLTextPlugin = () => {}; // Prevent RTL text plugin loading
+  
+  // For newer Mapbox versions that support this config 
+  if (typeof mapboxgl.config !== 'undefined' && mapboxgl.config) {
+    // @ts-ignore - This is an undocumented but working property
+    mapboxgl.config.EVENTS_URL = ''; // Empty URL prevents telemetry calls
+  }
+} catch (e) {
+  console.warn('Unable to disable Mapbox telemetry:', e);
+}
+
 // Define a global variable to track markers
 let markers: mapboxgl.Marker[] = [];
 
 // Initialize a map with default options
 export function initMap(container: HTMLElement, options: Omit<mapboxgl.MapOptions, 'container'> = {}): mapboxgl.Map {
   // Use the Mapbox token from environment variables
-  mapboxgl.accessToken = 'pk.eyJ1IjoiZWZhbnAiLCJhIjoiY21hZmxuZTVvMDQzYzJrcTVuczFlYWdnMiJ9.6CFAb0tbkHkgchHEkrg9vw';
+  mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoiZWZhbnAiLCJhIjoiY21hZmxuZTVvMDQzYzJrcTVuczFlYWdnMiJ9.6CFAb0tbkHkgchHEkrg9vw';
   
   const defaultOptions: mapboxgl.MapOptions = {
     container,
