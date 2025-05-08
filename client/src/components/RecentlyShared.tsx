@@ -21,9 +21,9 @@ const RecentlyShared = ({ trips, isLoading }: RecentlySharedProps) => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-heading font-bold text-neutral-800">Recently Shared</h2>
         <Link href="/explore?section=recent">
-          <a className="text-primary-500 font-medium text-sm hover:underline">
+          <span className="text-primary-500 font-medium text-sm hover:underline cursor-pointer">
             View all
-          </a>
+          </span>
         </Link>
       </div>
       
@@ -42,11 +42,11 @@ const RecentlyShared = ({ trips, isLoading }: RecentlySharedProps) => {
           )) : 
           // Trip cards
           trips.slice(0, 4).map(trip => (
-            <Link key={trip.id} href={`/trip/${trip.id}`}>
-              <a className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer block">
+            <div key={trip.id} className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer block">
+              <Link href={`/trip/${trip.id}`}>
                 <div className="relative">
                   <img 
-                    src={trip.coverImage} 
+                    src={trip.coverImage || "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1"} 
                     alt={trip.title} 
                     className="w-full h-40 object-cover"
                   />
@@ -67,7 +67,7 @@ const RecentlyShared = ({ trips, isLoading }: RecentlySharedProps) => {
                   {user && (
                     <div className="flex items-center gap-2">
                       <img 
-                        src={user.avatar} 
+                        src={user.avatar || ''} 
                         alt="User avatar" 
                         className="w-5 h-5 rounded-full object-cover"
                       />
@@ -75,8 +75,8 @@ const RecentlyShared = ({ trips, isLoading }: RecentlySharedProps) => {
                     </div>
                   )}
                 </div>
-              </a>
-            </Link>
+              </Link>
+            </div>
           ))
         }
       </div>
