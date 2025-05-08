@@ -24,9 +24,19 @@ export function useDebounce<T>(value: T, delay: number): T {
 export function useSearchTrips(queryText: string, sortBy: 'likes' | 'views' | 'date' = 'date') {
   return useQuery({
     queryKey: ['/api/search', queryText, sortBy],
-    queryFn: getQueryFn<Trip[]>({ on401: 'returnNull' }),
-    enabled: true,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    queryFn: async ({ queryKey }) => {
+      const [_path, query, sort] = queryKey as [string, string, 'likes' | 'views' | 'date'];
+      const url = `/api/search?q=${encodeURIComponent(query || '')}&sortBy=${sort}`;
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error('Failed to search trips');
+      }
+      
+      return response.json() as Promise<Trip[]>;
+    },
+    enabled: true, 
+    staleTime: 1000 * 60, // 1 minute
     refetchOnWindowFocus: false,
   });
 }

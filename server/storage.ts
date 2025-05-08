@@ -158,67 +158,166 @@ export class DatabaseStorage implements IStorage {
     // In a real production app, this would be done with proper SQL queries
     const allTrips = await this.getTrips();
     
-    // If no query, return all trips sorted
+    // If no query, return all trips sorted by the requested criteria
     if (!query) {
       return this.sortTrips(allTrips, sortBy);
     }
     
     // Normalize query for case-insensitive search
     const normalizedQuery = query.toLowerCase();
+    const queryTerms = normalizedQuery.split(/\s+/).filter(term => term.length > 0);
     
-    // Filter trips by title, summary or destination
-    const filteredTrips = allTrips.filter(trip => {
-      return (
-        trip.title.toLowerCase().includes(normalizedQuery) ||
-        trip.summary.toLowerCase().includes(normalizedQuery) ||
-        (trip.categories && trip.categories.some(cat => 
-          cat.toLowerCase().includes(normalizedQuery)
-        ))
-      );
+    // Score and rank the trips for relevance
+    const scoredTrips = allTrips.map(trip => {
+      let score = 0;
+      
+      // Check title match (higher weight)
+      if (trip.title.toLowerCase().includes(normalizedQuery)) {
+        score += 10;
+      }
+      
+      // Check for exact title matches of each term (higher relevance)
+      for (const term of queryTerms) {
+        if (trip.title.toLowerCase().includes(term)) {
+          score += 5;
+        }
+      }
+      
+      // Check summary match
+      if (trip.summary.toLowerCase().includes(normalizedQuery)) {
+        score += 5;
+      }
+      
+      // Check each query term in the summary
+      for (const term of queryTerms) {
+        if (trip.summary.toLowerCase().includes(term)) {
+          score += 2;
+        }
+      }
+      
+      // Check categories (tags) match (highest relevance)
+      if (trip.categories) {
+        // Exact category match
+        if (trip.categories.some(cat => cat.toLowerCase() === normalizedQuery)) {
+          score += 15;
+        }
+        
+        // Partial category match
+        if (trip.categories.some(cat => cat.toLowerCase().includes(normalizedQuery))) {
+          score += 10;
+        }
+        
+        // Check each term against categories
+        for (const term of queryTerms) {
+          if (trip.categories.some(cat => cat.toLowerCase().includes(term))) {
+            score += 5;
+          }
+        }
+      }
+      
+      return { trip, score };
     });
     
-    // Get pins for each trip to search in pin titles and descriptions
-    const tripPins = new Map<number, Pin[]>();
-    const pinsPromises = filteredTrips.map(async trip => {
-      const pins = await this.getPinsByTripId(trip.id);
-      tripPins.set(trip.id, pins);
+    // Get pins for trips that have a non-zero score or if we have few matching trips
+    const relevantTrips = scoredTrips.filter(item => item.score > 0);
+    const tripIdsToCheck = relevantTrips.length < 5 
+      ? allTrips.map(t => t.id) // Check all trips if few matches
+      : relevantTrips.map(item => item.trip.id);
+    
+    // Get pins for relevant trips to check for matches in pin content
+    const tripPinsMap = new Map<number, Pin[]>();
+    const pinsPromises = tripIdsToCheck.map(async tripId => {
+      const pins = await this.getPinsByTripId(tripId);
+      tripPinsMap.set(tripId, pins);
     });
     
     await Promise.all(pinsPromises);
     
-    // Filter trips that have pins matching the query
-    const tripIdsWithMatchingPins = Array.from(tripPins.entries())
-      .filter(([_, pins]) => 
-        pins.some(pin => 
-          pin.title.toLowerCase().includes(normalizedQuery) ||
-          (pin.description && pin.description.toLowerCase().includes(normalizedQuery)) ||
-          (pin.activities && pin.activities.some(activity => 
-            activity.toLowerCase().includes(normalizedQuery)
-          ))
-        )
-      )
-      .map(([tripId, _]) => tripId);
+    // Update scores based on pin matches
+    const tripScores = new Map(scoredTrips.map(item => [item.trip.id, item.score]));
     
-    // Add trips with matching pins if they're not already in filtered trips
-    const tripsWithMatchingPins = allTrips.filter(trip => 
-      tripIdsWithMatchingPins.includes(trip.id) && 
-      !filteredTrips.some(filtered => filtered.id === trip.id)
-    );
+    // Check pins for matches
+    for (const [tripId, pins] of tripPinsMap.entries()) {
+      let pinScore = 0;
+      
+      // Check for exact matches in pins
+      for (const pin of pins) {
+        // Check pin title
+        if (pin.title.toLowerCase().includes(normalizedQuery)) {
+          pinScore += 5;
+        }
+        
+        // Check pin description
+        if (pin.description && pin.description.toLowerCase().includes(normalizedQuery)) {
+          pinScore += 3;
+        }
+        
+        // Check pin activities
+        if (pin.activities && pin.activities.some(activity => 
+          activity.toLowerCase().includes(normalizedQuery))
+        ) {
+          pinScore += 8;
+        }
+        
+        // Check individual terms in pin details
+        for (const term of queryTerms) {
+          if (pin.title.toLowerCase().includes(term)) {
+            pinScore += 2;
+          }
+          
+          if (pin.description && pin.description.toLowerCase().includes(term)) {
+            pinScore += 1;
+          }
+          
+          if (pin.activities && pin.activities.some(activity => 
+            activity.toLowerCase().includes(term))
+          ) {
+            pinScore += 3;
+          }
+        }
+      }
+      
+      // Update the trip's score with pin score
+      const currentScore = tripScores.get(tripId) || 0;
+      tripScores.set(tripId, currentScore + pinScore);
+    }
     
-    const results = [...filteredTrips, ...tripsWithMatchingPins];
+    // Create final scored trips array with updated scores
+    const finalScoredTrips = allTrips.map(trip => ({
+      trip,
+      score: tripScores.get(trip.id) || 0
+    }));
     
-    // Sort the results
-    return this.sortTrips(results, sortBy);
+    // Filter to only include trips with a score > 0
+    const matchingTrips = finalScoredTrips
+      .filter(item => item.score > 0)
+      .map(item => item.trip);
+    
+    // If using relevance sorting (date is default), sort by score
+    if (matchingTrips.length > 0 && sortBy === 'date') {
+      // Sort by score in descending order
+      return matchingTrips.sort((a, b) => {
+        const scoreA = tripScores.get(a.id) || 0;
+        const scoreB = tripScores.get(b.id) || 0;
+        return scoreB - scoreA;
+      });
+    }
+    
+    // Otherwise, sort by the requested criteria
+    return this.sortTrips(matchingTrips, sortBy);
   }
   
   private sortTrips(trips: Trip[], sortBy: 'likes' | 'views' | 'date'): Trip[] {
     switch (sortBy) {
       case 'likes':
+        // Sort by like count from highest to lowest
         return [...trips].sort((a, b) => b.likeCount - a.likeCount);
       case 'views':
+        // Sort by view count from highest to lowest
         return [...trips].sort((a, b) => b.viewCount - a.viewCount);
       case 'date':
       default:
+        // Sort by creation date from newest to oldest
         return [...trips].sort((a, b) => 
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );

@@ -281,9 +281,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get(apiPath("/search"), async (req: Request, res: Response) => {
     try {
       const query = typeof req.query.q === 'string' ? req.query.q : '';
-      const sortBy = req.query.sortBy as 'likes' | 'views' | 'date' || 'date';
+      
+      // Default to 'date' (relevance-based sort) if not specified
+      let sortBy: 'likes' | 'views' | 'date' = 'date';
+      
+      // Only set sort if it's a valid option
+      if (req.query.sortBy && ['likes', 'views', 'date'].includes(req.query.sortBy as string)) {
+        sortBy = req.query.sortBy as 'likes' | 'views' | 'date';
+      }
+      
+      console.log(`[search] Query: "${query}", Sort: ${sortBy}`);
       
       const results = await storage.searchTrips(query, sortBy);
+      console.log(`[search] Found ${results.length} results`);
+      
       return res.json(results);
     } catch (error) {
       console.error("Error searching trips:", error);

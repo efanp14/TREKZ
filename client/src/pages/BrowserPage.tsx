@@ -135,13 +135,13 @@ const BrowserPage = ({ user }: { user?: User }) => {
             <Tabs defaultValue="date" value={sortBy} onValueChange={handleSortChange} className="w-auto">
               <TabsList className="bg-cream">
                 <TabsTrigger value="date" className="data-[state=active]:bg-yellow-light">
-                  Recent
+                  Most Relevant
                 </TabsTrigger>
                 <TabsTrigger value="likes" className="data-[state=active]:bg-yellow-light">
-                  Most Liked
+                  Most Liked ❤️
                 </TabsTrigger>
                 <TabsTrigger value="views" className="data-[state=active]:bg-yellow-light">
-                  Popular
+                  Most Viewed 👁️
                 </TabsTrigger>
               </TabsList>
             </Tabs>
