@@ -7,16 +7,19 @@ import { useLocation } from "wouter";
 interface LayoutProps {
   children: ReactNode;
   user?: User;
+  activeTab?: string;
 }
 
-const Layout = ({ children, user }: LayoutProps) => {
+const Layout = ({ children, user, activeTab: propActiveTab }: LayoutProps) => {
   const [location] = useLocation();
   
   // Determine active tab based on the current route
   const getActiveTab = () => {
+    if (propActiveTab) return propActiveTab;
     if (location === "/") return "explore";
     if (location === "/my-trips") return "my-trips";
     if (location === "/create") return "create";
+    if (location === "/browser") return "browser";
     if (location.startsWith("/trip/")) return ""; // No active tab for trip details
     return "";
   };

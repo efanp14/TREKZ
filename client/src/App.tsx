@@ -5,6 +5,7 @@ import CreateTrip from "@/pages/CreateTrip";
 import TripDetails from "@/pages/TripDetails";
 import EditTrip from "@/pages/EditTrip";
 import MyTrips from "@/pages/MyTrips";
+import BrowserPage from "@/pages/BrowserPage";
 import NotFound from "@/pages/not-found";
 import { useQuery } from "@tanstack/react-query";
 import { User } from "@shared/schema";
@@ -31,6 +32,9 @@ function App() {
         <Route path="/trip/:id" component={TripDetails} />
         <Route path="/trip/:id/edit" component={EditTrip} />
         <Route path="/my-trips" component={MyTrips} />
+        <Route path="/browser">
+          {() => <BrowserPage user={currentUser} />}
+        </Route>
         <Route component={NotFound} />
       </Switch>
     </Layout>
