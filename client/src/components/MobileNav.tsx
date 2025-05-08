@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Compass, MapPin, PlusCircle, Bookmark } from "lucide-react";
+import { Compass, MapPin, PlusCircle, Search, Bookmark } from "lucide-react";
 
 interface MobileNavProps {
   activeTab: string;
@@ -44,10 +44,16 @@ const MobileNav = ({ activeTab }: MobileNavProps) => {
           <span className="text-xs mt-1 font-heading">Create</span>
         </div>
       </Link>
-      <div className="flex flex-col items-center text-foreground cursor-pointer">
-        <Bookmark className="h-5 w-5" />
-        <span className="text-xs mt-1 font-heading">Saved</span>
-      </div>
+      <Link href="/browser">
+        <div className={`flex flex-col items-center cursor-pointer ${
+          activeTab === 'browser' 
+            ? 'text-yellow-gold font-medium' 
+            : 'text-foreground'
+        }`}>
+          <Search className="h-5 w-5" />
+          <span className="text-xs mt-1 font-heading">Browse</span>
+        </div>
+      </Link>
     </nav>
   );
 };

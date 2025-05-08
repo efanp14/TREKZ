@@ -75,7 +75,7 @@ const BrowserPage = ({ user }: { user?: User }) => {
 
   // Handle trip card click
   const handleTripClick = (tripId: number) => {
-    setLocation(`/trips/${tripId}`);
+    setLocation(`/trip/${tripId}`);
   };
 
   return (

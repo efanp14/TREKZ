@@ -111,9 +111,11 @@ const Header = ({ user, activeTab }: HeaderProps) => {
           </Link>
         </div>
         <div className="flex items-center gap-3">
-          <button className="p-2 rounded-full hover:bg-yellow-light/50 transition-colors">
-            <Search className="text-foreground h-5 w-5" />
-          </button>
+          <Link href="/browser">
+            <button className="p-2 rounded-full hover:bg-yellow-light/50 transition-colors">
+              <Search className="text-foreground h-5 w-5" />
+            </button>
+          </Link>
           {user && (
             <img 
               src={getAvatarUrl(user)} 
