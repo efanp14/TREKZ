@@ -34,8 +34,8 @@ const TripCard = ({ trip, showDate = "range" }: TripCardProps) => {
   };
 
   return (
-    <Link href={`/trip/${trip.id}`}>
-      <a className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer block">
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer block">
+      <Link href={`/trip/${trip.id}`}>
         <div className="relative">
           <img 
             src={trip.coverImage || "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=500"} 
@@ -53,7 +53,7 @@ const TripCard = ({ trip, showDate = "range" }: TripCardProps) => {
           {user && (
             <div className="flex items-center gap-2 mb-2">
               <img 
-                src={user.avatar} 
+                src={user.avatar || ''} 
                 alt="User avatar" 
                 className="w-6 h-6 rounded-full object-cover"
               />
@@ -76,8 +76,8 @@ const TripCard = ({ trip, showDate = "range" }: TripCardProps) => {
             </div>
           </div>
         </div>
-      </a>
-    </Link>
+      </Link>
+    </div>
   );
 };
 
