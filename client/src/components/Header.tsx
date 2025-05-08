@@ -20,17 +20,17 @@ const Header = ({ user, activeTab }: HeaderProps) => {
   return (
     <>
       {/* Desktop Header */}
-      <header className="hidden md:flex items-center justify-between px-6 py-4 navbar">
-        <div className="flex items-center gap-8">
-          <div className="flex items-center gap-2">
+      <header className="hidden md:flex items-center justify-between px-6 navbar">
+        <div className="flex items-center gap-10">
+          <div className="flex items-center">
             <Link href="/">
               <div className="flex items-center cursor-pointer">
                 <img 
                   src={trekzLogo} 
                   alt="Trekz logo" 
-                  className="h-8 w-8 object-contain" 
+                  className="h-20 w-20 object-contain mr-1" 
                 />
-                <h1 className="text-xl trekz-logo ml-2 text-foreground">
+                <h1 className="text-xl trekz-logo -ml-1 text-foreground">
                   <span className="font-bold">Trekz</span>
                 </h1>
               </div>
@@ -93,16 +93,16 @@ const Header = ({ user, activeTab }: HeaderProps) => {
       </header>
       
       {/* Mobile Header */}
-      <header className="md:hidden flex items-center justify-between px-4 py-3 navbar">
-        <div className="flex items-center gap-2">
+      <header className="md:hidden flex items-center justify-between px-3 py-2 navbar">
+        <div className="flex items-center">
           <Link href="/">
             <div className="flex items-center cursor-pointer">
               <img 
                 src={trekzLogo} 
                 alt="Trekz logo" 
-                className="h-7 w-7 object-contain" 
+                className="h-16 w-16 object-contain" 
               />
-              <h1 className="text-lg trekz-logo ml-1.5">
+              <h1 className="text-lg trekz-logo -ml-1">
                 <span className="font-bold">Trekz</span>
               </h1>
             </div>
