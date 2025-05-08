@@ -300,6 +300,18 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
         );
       }
     });
+    
+    // After adding a pin, center on the most recently added pin to make it easier
+    // to add the next pin nearby, reducing the need for manual panning
+    if (map && data.longitude && data.latitude) {
+      // Use the flyTo function to animate to the last pin location with a slightly zoomed view
+      flyToLocation(
+        map,
+        [parseFloat(data.longitude), parseFloat(data.latitude)],
+        10, // Zoomed in enough to see details but not too close
+        { duration: 1500 } // Slightly faster animation for better UX
+      );
+    }
   };
 
   const toggleActivity = (activity: string) => {
