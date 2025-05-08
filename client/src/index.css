@@ -3,48 +3,74 @@
 @tailwind utilities;
 
 :root {
-      --background: 0 0% 100%;
---foreground: 20 14.3% 4.1%;
---muted: 60 4.8% 95.9%;
---muted-foreground: 25 5.3% 44.7%;
---popover: 0 0% 100%;
---popover-foreground: 20 14.3% 4.1%;
---card: 0 0% 100%;
---card-foreground: 20 14.3% 4.1%;
---border: 20 5.9% 90%;
---input: 20 5.9% 90%;
---primary: 207 90% 54%;
---primary-foreground: 211 100% 99%;
---secondary: 60 4.8% 95.9%;
---secondary-foreground: 24 9.8% 10%;
---accent: 60 4.8% 95.9%;
---accent-foreground: 24 9.8% 10%;
---destructive: 0 84.2% 60.2%;
---destructive-foreground: 60 9.1% 97.8%;
---ring: 20 14.3% 4.1%;
---radius: 0.5rem;
+  /* Base colors */
+  --background: 60 30% 98%;
+  --foreground: 45 10% 20%;
+  
+  /* Pastel yellow */
+  --yellow-light: 48 80% 85%;
+  --yellow-mid: 48 75% 75%;
+  --yellow-deep: 45 70% 65%;
+  
+  /* Mint green */
+  --mint-light: 165 40% 85%;
+  --mint-mid: 165 35% 75%;
+  --mint-deep: 162 30% 65%;
+  
+  /* UI Elements */
+  --muted: 48 30% 95%;
+  --muted-foreground: 45 10% 40%;
+  --popover: 60 30% 98%;
+  --popover-foreground: 45 10% 20%;
+  --card: 60 20% 98%;
+  --card-foreground: 45 10% 20%;
+  --border: 48 30% 90%;
+  --input: 48 30% 90%;
+  --primary: 48 75% 75%;
+  --primary-foreground: 45 10% 20%; 
+  --secondary: 165 40% 85%;
+  --secondary-foreground: 165 10% 20%;
+  --accent: 162 30% 65%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --ring: 45 70% 65%;
+  --radius: 0.5rem;
   }
   .dark {
-      --background: 240 10% 3.9%;
---foreground: 0 0% 98%;
---muted: 240 3.7% 15.9%;
---muted-foreground: 240 5% 64.9%;
---popover: 240 10% 3.9%;
---popover-foreground: 0 0% 98%;
---card: 240 10% 3.9%;
---card-foreground: 0 0% 98%;
---border: 240 3.7% 15.9%;
---input: 240 3.7% 15.9%;
---primary: 207 90% 54%;
---primary-foreground: 211 100% 99%;
---secondary: 240 3.7% 15.9%;
---secondary-foreground: 0 0% 98%;
---accent: 240 3.7% 15.9%;
---accent-foreground: 0 0% 98%;
---destructive: 0 62.8% 30.6%;
---destructive-foreground: 0 0% 98%;
---ring: 240 4.9% 83.9%;
---radius: 0.5rem;
+  /* Dark mode base colors */
+  --background: 45 15% 10%;
+  --foreground: 48 30% 95%;
+  
+  /* Dark mode yellows (more muted) */
+  --yellow-light: 48 35% 50%;
+  --yellow-mid: 48 40% 45%;
+  --yellow-deep: 45 45% 40%;
+  
+  /* Dark mode mint */
+  --mint-light: 165 25% 40%;
+  --mint-mid: 165 30% 30%;
+  --mint-deep: 162 35% 25%;
+  
+  /* Dark mode UI elements */
+  --muted: 45 15% 15%;
+  --muted-foreground: 48 20% 70%;
+  --popover: 45 15% 10%;
+  --popover-foreground: 48 30% 95%;
+  --card: 45 15% 12%;
+  --card-foreground: 48 30% 95%;
+  --border: 45 15% 25%;
+  --input: 45 15% 25%;
+  --primary: 48 50% 55%;
+  --primary-foreground: 45 10% 15%;
+  --secondary: 165 25% 40%;
+  --secondary-foreground: 60 30% 98%;
+  --accent: 162 30% 40%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 45 70% 50%;
+  --radius: 0.5rem;
   }
 
 @layer base {
@@ -55,4 +81,84 @@
   body {
     @apply font-sans antialiased bg-background text-foreground;
   }
+}
+
+/* Custom patterns and backgrounds */
+.diamond-pattern {
+  background-color: hsl(var(--yellow-light));
+  background-image: 
+    linear-gradient(45deg, hsl(var(--yellow-mid)) 25%, transparent 25%, transparent 75%, hsl(var(--yellow-mid)) 75%, hsl(var(--yellow-mid))), 
+    linear-gradient(45deg, hsl(var(--yellow-mid)) 25%, transparent 25%, transparent 75%, hsl(var(--yellow-mid)) 75%, hsl(var(--yellow-mid)));
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px;
+  opacity: 0.4;
+}
+
+.gradient-bg-yellow-mint {
+  background: linear-gradient(135deg, hsl(var(--yellow-light)) 0%, hsl(var(--mint-light)) 100%);
+  opacity: 0.7;
+}
+
+.gradient-bg-mint {
+  background: linear-gradient(45deg, hsl(var(--mint-mid)) 0%, hsl(var(--mint-light)) 100%);
+}
+
+.gradient-bg-yellow {
+  background: linear-gradient(45deg, hsl(var(--yellow-deep)) 0%, hsl(var(--yellow-light)) 100%);
+}
+
+/* Custom component styling */
+.card {
+  @apply border border-border bg-card text-card-foreground shadow-sm;
+}
+
+.button-primary {
+  @apply bg-primary text-primary-foreground transition-colors;
+}
+.button-primary:hover {
+  background-color: hsl(var(--yellow-deep));
+}
+
+.button-secondary {
+  @apply bg-secondary text-secondary-foreground transition-colors;
+}
+.button-secondary:hover {
+  background-color: hsl(var(--mint-mid));
+}
+
+.navbar {
+  background: linear-gradient(to right, hsl(var(--yellow-light)), hsl(var(--mint-light)));
+  @apply border-b border-border;
+}
+
+.tag {
+  background-color: hsl(var(--yellow-light));
+  @apply text-foreground text-xs px-2 py-1 rounded-full;
+}
+
+/* Special background for featured items */
+.featured-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.featured-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, hsl(var(--yellow-light)) 0%, hsl(var(--mint-light)) 100%);
+  opacity: 0.2;
+  z-index: -1;
+}
+
+/* Hero section gradient */
+.hero-gradient {
+  background: linear-gradient(135deg, 
+    rgba(254, 249, 231, 0.9) 0%,
+    rgba(240, 246, 245, 0.9) 50%,
+    rgba(220, 241, 235, 0.9) 100%
+  );
 }
