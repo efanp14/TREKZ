@@ -16,14 +16,21 @@ const Explore = () => {
     queryKey: ['/api/recent'],
   });
 
-  // Fetch featured trip (Italian Coastal Dream) and its pins
+  // Fetch all trips to find a featured one
   const { data: trips } = useQuery<Trip[]>({
     queryKey: ['/api/trips'],
   });
 
-  const featuredTrip = trips?.find(trip => trip.title === "Italian Coastal Dream");
+  // Find a suitable featured trip that has a good description and cover image
+  const featuredTrip = trips?.find(trip => 
+    trip.summary && 
+    trip.summary.length > 50 && 
+    trip.coverImage && 
+    trip.coverImage.length > 0
+  );
   
-  const { data: featuredTripPins } = useQuery<Pin[]>({
+  // Fetch pins for the featured trip
+  const { data: featuredTripPins, isLoading: pinsLoading } = useQuery<Pin[]>({
     queryKey: ['/api/trips', featuredTrip?.id, 'pins'],
     enabled: !!featuredTrip?.id,
   });
@@ -41,6 +48,7 @@ const Explore = () => {
         <FeaturedTrip 
           trip={featuredTrip} 
           pins={featuredTripPins || []} 
+          isLoading={pinsLoading}
         />
       )}
       

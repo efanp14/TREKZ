@@ -1,10 +1,11 @@
 import { Link } from "wouter";
 import { Trip, Pin, User } from "@shared/schema";
-import { Heart, Share2 } from "lucide-react";
+import { Heart, Share2, Loader } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { useMemo } from "react";
 import TripTimeline from "./TripTimeline";
+import { MapView } from "./MapView";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -12,24 +13,14 @@ import { useToast } from "@/hooks/use-toast";
 interface FeaturedTripProps {
   trip: Trip;
   pins: Pin[];
+  isLoading?: boolean;
 }
 
-const FeaturedTrip = ({ trip, pins }: FeaturedTripProps) => {
+const FeaturedTrip = ({ trip, pins, isLoading = false }: FeaturedTripProps) => {
   const { toast } = useToast();
   const { data: user } = useQuery<User>({
     queryKey: ['/api/auth/me'],
   });
-
-  // Group pins by location to create map markers
-  const mapPins = useMemo(() => {
-    return pins.map((pin, index) => ({
-      id: pin.id,
-      lat: parseFloat(pin.latitude),
-      lng: parseFloat(pin.longitude),
-      number: index + 1,
-      title: pin.title
-    }));
-  }, [pins]);
 
   // Handle liking a trip
   const handleLike = async () => {
@@ -71,6 +62,16 @@ const FeaturedTrip = ({ trip, pins }: FeaturedTripProps) => {
     }
   };
 
+  // Format the date range for display
+  const formattedDateRange = useMemo(() => {
+    try {
+      return `${format(new Date(trip.startDate), "MMMM d")} - ${format(new Date(trip.endDate), "MMMM d, yyyy")}`;
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Date range unavailable";
+    }
+  }, [trip.startDate, trip.endDate]);
+
   return (
     <div className="px-4 md:px-8 mb-8">
       <div className="flex items-center justify-between mb-4">
@@ -79,32 +80,25 @@ const FeaturedTrip = ({ trip, pins }: FeaturedTripProps) => {
       
       <div className="bg-white rounded-xl shadow overflow-hidden">
         <div className="md:flex">
-          <div className="md:w-1/2">
-            <div className="h-64 md:h-full relative rounded-tl-xl rounded-tr-xl md:rounded-tr-none md:rounded-bl-xl overflow-hidden">
-              {/* Map Background */}
-              <div className="absolute inset-0 bg-cover bg-center" 
-                style={{ 
-                  backgroundImage: "url('https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/14.3757,40.6263,6/1200x600?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw')"
-                }}>
+          <div className="md:w-1/2 h-64 md:h-auto">
+            {isLoading ? (
+              <div className="h-full flex items-center justify-center bg-neutral-50">
+                <Loader className="h-8 w-8 text-neutral-400 animate-spin" />
               </div>
-              
-              {/* Map Pins */}
-              {mapPins.map((pin) => (
-                <div 
-                  key={pin.id}
-                  className="pin-container absolute animate-pulse-slow"
-                  style={{ 
-                    left: `${30 + (pin.number * 15)}%`, 
-                    top: `${40 + (pin.number * 5)}%`, 
-                    animationDelay: `${0.2 * pin.number}s` 
-                  }}
-                >
-                  <div className="w-6 h-6 bg-primary-500 rounded-full flex items-center justify-center border-2 border-white shadow-md">
-                    <span className="text-white text-xs font-bold">{pin.number}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            ) : pins.length > 0 ? (
+              // Use the MapView component for a proper interactive map
+              <div className="h-full relative rounded-tl-xl rounded-tr-xl md:rounded-tr-none md:rounded-bl-xl overflow-hidden">
+                <MapView trip={trip} pins={pins} />
+              </div>
+            ) : (
+              // Fallback to static image if no pins
+              <div 
+                className="h-full bg-cover bg-center" 
+                style={{ 
+                  backgroundImage: `url('${trip.coverImage || "https://via.placeholder.com/800x600?text=No+Map+Data"}')`
+                }}
+              ></div>
+            )}
           </div>
           
           <div className="md:w-1/2 p-5 md:p-6">
@@ -160,11 +154,17 @@ const FeaturedTrip = ({ trip, pins }: FeaturedTripProps) => {
               <div className="flex items-center justify-between text-sm mb-2">
                 <div className="font-medium text-neutral-800">Trip Timeline</div>
                 <div className="text-neutral-500">
-                  {format(new Date(trip.startDate), "MMMM d")} - {format(new Date(trip.endDate), "MMMM d, yyyy")}
+                  {formattedDateRange}
                 </div>
               </div>
               
-              <TripTimeline pins={pins} />
+              {pins.length > 0 ? (
+                <TripTimeline pins={pins} />
+              ) : (
+                <div className="py-4 text-sm text-center text-neutral-500">
+                  No locations have been added to this trip yet.
+                </div>
+              )}
             </div>
             
             <Link href={`/trip/${trip.id}`}>
