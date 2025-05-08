@@ -72,9 +72,11 @@ const Header = ({ user, activeTab }: HeaderProps) => {
             <input 
               type="text" 
               placeholder="Search destinations..." 
-              className="trekz-input pl-10 pr-4 py-2 rounded-full w-64 focus:ring-2 focus:ring-yellow-gold focus:outline-none transition-shadow"
+              className="trekz-input pl-10 pr-4 py-2 rounded-full w-64 focus:ring-2 focus:ring-yellow-gold focus:outline-none transition-shadow cursor-pointer"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onClick={() => window.location.href = '/browser'}
+              readOnly
             />
           </div>
           {user && (

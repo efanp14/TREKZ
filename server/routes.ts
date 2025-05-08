@@ -276,6 +276,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(500).json({ message: "Internal server error" });
     }
   });
+  
+  // Search trips with filters and sorting
+  app.get(apiPath("/search"), async (req: Request, res: Response) => {
+    try {
+      const query = typeof req.query.q === 'string' ? req.query.q : '';
+      const sortBy = req.query.sortBy as 'likes' | 'views' | 'date' || 'date';
+      
+      const results = await storage.searchTrips(query, sortBy);
+      return res.json(results);
+    } catch (error) {
+      console.error("Error searching trips:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;

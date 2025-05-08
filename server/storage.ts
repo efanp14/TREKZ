@@ -25,6 +25,7 @@ export interface IStorage {
   getRecentTrips(limit?: number): Promise<Trip[]>;
   incrementTripViews(id: number): Promise<void>;
   likeTrip(id: number): Promise<void>;
+  searchTrips(query: string, sortBy?: 'likes' | 'views' | 'date'): Promise<Trip[]>;
 
   // Pin operations
   getPinsByTripId(tripId: number): Promise<Pin[]>;
@@ -149,6 +150,78 @@ export class DatabaseStorage implements IStorage {
         .update(trips)
         .set({ likeCount: trip.likeCount + 1 })
         .where(eq(trips.id, id));
+    }
+  }
+  
+  async searchTrips(query: string, sortBy: 'likes' | 'views' | 'date' = 'date'): Promise<Trip[]> {
+    // Get all trips - we'll filter and sort in-memory for now
+    // In a real production app, this would be done with proper SQL queries
+    const allTrips = await this.getTrips();
+    
+    // If no query, return all trips sorted
+    if (!query) {
+      return this.sortTrips(allTrips, sortBy);
+    }
+    
+    // Normalize query for case-insensitive search
+    const normalizedQuery = query.toLowerCase();
+    
+    // Filter trips by title, summary or destination
+    const filteredTrips = allTrips.filter(trip => {
+      return (
+        trip.title.toLowerCase().includes(normalizedQuery) ||
+        trip.summary.toLowerCase().includes(normalizedQuery) ||
+        (trip.categories && trip.categories.some(cat => 
+          cat.toLowerCase().includes(normalizedQuery)
+        ))
+      );
+    });
+    
+    // Get pins for each trip to search in pin titles and descriptions
+    const tripPins = new Map<number, Pin[]>();
+    const pinsPromises = filteredTrips.map(async trip => {
+      const pins = await this.getPinsByTripId(trip.id);
+      tripPins.set(trip.id, pins);
+    });
+    
+    await Promise.all(pinsPromises);
+    
+    // Filter trips that have pins matching the query
+    const tripIdsWithMatchingPins = Array.from(tripPins.entries())
+      .filter(([_, pins]) => 
+        pins.some(pin => 
+          pin.title.toLowerCase().includes(normalizedQuery) ||
+          (pin.description && pin.description.toLowerCase().includes(normalizedQuery)) ||
+          (pin.activities && pin.activities.some(activity => 
+            activity.toLowerCase().includes(normalizedQuery)
+          ))
+        )
+      )
+      .map(([tripId, _]) => tripId);
+    
+    // Add trips with matching pins if they're not already in filtered trips
+    const tripsWithMatchingPins = allTrips.filter(trip => 
+      tripIdsWithMatchingPins.includes(trip.id) && 
+      !filteredTrips.some(filtered => filtered.id === trip.id)
+    );
+    
+    const results = [...filteredTrips, ...tripsWithMatchingPins];
+    
+    // Sort the results
+    return this.sortTrips(results, sortBy);
+  }
+  
+  private sortTrips(trips: Trip[], sortBy: 'likes' | 'views' | 'date'): Trip[] {
+    switch (sortBy) {
+      case 'likes':
+        return [...trips].sort((a, b) => b.likeCount - a.likeCount);
+      case 'views':
+        return [...trips].sort((a, b) => b.viewCount - a.viewCount);
+      case 'date':
+      default:
+        return [...trips].sort((a, b) => 
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
     }
   }
 

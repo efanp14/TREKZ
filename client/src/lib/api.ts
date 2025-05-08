@@ -44,3 +44,10 @@ export async function likeTrip(tripId: number): Promise<Trip> {
   const response = await apiRequest('POST', `/api/trips/${tripId}/like`);
   return response.json();
 }
+
+// Search trips with optional filtering
+export async function searchTrips(query: string, sortBy: 'likes' | 'views' | 'date' = 'date'): Promise<Trip[]> {
+  const url = `/api/search?q=${encodeURIComponent(query)}&sortBy=${sortBy}`;
+  const response = await apiRequest('GET', url);
+  return response.json();
+}
