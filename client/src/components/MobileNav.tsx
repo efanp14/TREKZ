@@ -15,7 +15,7 @@ const MobileNav = ({ activeTab }: MobileNavProps) => {
             : 'text-foreground'
         }`}>
           <Compass className="h-5 w-5" />
-          <span className="text-xs mt-1">Explore</span>
+          <span className="text-xs mt-1 font-heading">Explore</span>
         </div>
       </Link>
       <Link href="/my-trips">
@@ -25,7 +25,7 @@ const MobileNav = ({ activeTab }: MobileNavProps) => {
             : 'text-foreground'
         }`}>
           <MapPin className="h-5 w-5" />
-          <span className="text-xs mt-1">My Trips</span>
+          <span className="text-xs mt-1 font-heading">My Trips</span>
         </div>
       </Link>
       <Link href="/create">
@@ -41,12 +41,12 @@ const MobileNav = ({ activeTab }: MobileNavProps) => {
           }`}>
             <PlusCircle className="h-5 w-5" />
           </div>
-          <span className="text-xs mt-1">Create</span>
+          <span className="text-xs mt-1 font-heading">Create</span>
         </div>
       </Link>
       <div className="flex flex-col items-center text-foreground cursor-pointer">
         <Bookmark className="h-5 w-5" />
-        <span className="text-xs mt-1">Saved</span>
+        <span className="text-xs mt-1 font-heading">Saved</span>
       </div>
     </nav>
   );

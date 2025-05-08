@@ -11,7 +11,7 @@ const HeroSection = () => {
               <div className="mb-3 inline-block bg-yellow-light px-4 py-1 rounded-full">
                 <span className="text-sm font-medium">Share Your Adventures</span>
               </div>
-              <h1 className="text-3xl md:text-5xl trekz-logo mb-4">
+              <h1 className="text-3xl md:text-5xl font-heading mb-4">
                 Map Your Journey with <span className="text-yellow-gold">Trekz</span>
               </h1>
               <p className="text-foreground/80 text-base md:text-lg mb-8">
@@ -19,13 +19,13 @@ const HeroSection = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link href="/create">
-                  <div className="button-primary px-6 py-3 rounded-lg flex items-center gap-2 inline-flex cursor-pointer">
+                  <div className="button-primary px-6 py-3 rounded-lg flex items-center gap-2 inline-flex cursor-pointer font-heading">
                     <Plus className="h-5 w-5" />
                     Create New Trip
                   </div>
                 </Link>
                 <Link href="/explore">
-                  <div className="button-secondary px-6 py-3 rounded-lg flex items-center gap-2 inline-flex cursor-pointer">
+                  <div className="button-secondary px-6 py-3 rounded-lg flex items-center gap-2 inline-flex cursor-pointer font-heading">
                     <Map className="h-5 w-5" />
                     Explore Trips
                   </div>

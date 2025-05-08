@@ -38,7 +38,7 @@ const Header = ({ user, activeTab }: HeaderProps) => {
           </div>
           <nav className="flex gap-6">
             <Link href="/">
-              <span className={`font-medium py-2 cursor-pointer ${
+              <span className={`font-heading font-medium py-2 cursor-pointer ${
                 activeTab === 'explore' 
                 ? 'text-yellow-gold border-b-2 border-yellow-gold' 
                 : 'text-foreground hover:text-yellow-gold transition-colors'
@@ -47,7 +47,7 @@ const Header = ({ user, activeTab }: HeaderProps) => {
               </span>
             </Link>
             <Link href="/my-trips">
-              <span className={`font-medium py-2 cursor-pointer ${
+              <span className={`font-heading font-medium py-2 cursor-pointer ${
                 activeTab === 'my-trips' 
                 ? 'text-yellow-gold border-b-2 border-yellow-gold' 
                 : 'text-foreground hover:text-yellow-gold transition-colors'
@@ -56,7 +56,7 @@ const Header = ({ user, activeTab }: HeaderProps) => {
               </span>
             </Link>
             <Link href="/create">
-              <span className={`font-medium py-2 cursor-pointer ${
+              <span className={`font-heading font-medium py-2 cursor-pointer ${
                 activeTab === 'create' 
                 ? 'text-yellow-gold border-b-2 border-yellow-gold' 
                 : 'text-foreground hover:text-yellow-gold transition-colors'
