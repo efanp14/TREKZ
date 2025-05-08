@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Trip, Pin, InsertTrip, InsertPin, tripFormSchema, pinFormSchema } from "@shared/schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import imageCompression from "browser-image-compression";
 import { 
   Form, 
   FormControl, 
@@ -219,34 +220,54 @@ const EditTrip = () => {
     
     setUploadingImage(true);
     
+    // Compression options
+    const compressionOptions = {
+      maxSizeMB: 1, // Max size in MB
+      maxWidthOrHeight: 1200, // Max width/height in pixels
+      useWebWorker: true, // Use web workers for better performance
+      fileType: 'image/jpeg', // Convert all images to JPEG for better compression
+    };
+    
     // Process each file
     const processFiles = async () => {
       const currentPhotos = pinForm.getValues().photos || [];
       const newImageUrls: string[] = [];
       
-      // Convert each file to a data URL
+      // Process and compress each file
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        
-        // Create a FileReader to read the file content
-        const reader = new FileReader();
-        
-        // Create a promise to handle the asynchronous file reading
-        const readFilePromise = new Promise<string>((resolve) => {
-          reader.onload = () => {
-            // reader.result contains the data URL
-            if (typeof reader.result === 'string') {
-              resolve(reader.result);
-            }
-          };
-        });
-        
-        // Start reading the file as a data URL
-        reader.readAsDataURL(file);
-        
-        // Wait for the file to be read and add the result to our URLs array
-        const dataUrl = await readFilePromise;
-        newImageUrls.push(dataUrl);
+        try {
+          // Compress the image file
+          const compressedFile = await imageCompression(file, compressionOptions);
+          
+          // Create a FileReader to read the compressed file content
+          const reader = new FileReader();
+          
+          // Create a promise to handle the asynchronous file reading
+          const readFilePromise = new Promise<string>((resolve) => {
+            reader.onload = () => {
+              // reader.result contains the data URL
+              if (typeof reader.result === 'string') {
+                resolve(reader.result);
+              }
+            };
+          });
+          
+          // Start reading the compressed file as a data URL
+          reader.readAsDataURL(compressedFile);
+          
+          // Wait for the file to be read and add the result to our URLs array
+          const dataUrl = await readFilePromise;
+          newImageUrls.push(dataUrl);
+          
+        } catch (error) {
+          console.error('Error compressing image:', error);
+          toast({
+            title: "Image compression error",
+            description: "There was a problem compressing your image. Try a smaller file or different format.",
+            variant: "destructive"
+          });
+        }
       }
       
       // Add all new image URLs to our form state
