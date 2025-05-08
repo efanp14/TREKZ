@@ -61,7 +61,7 @@ const Header = ({ user, activeTab }: HeaderProps) => {
           {user && (
             <div className="flex items-center gap-2 rounded-full bg-neutral-100 px-3 py-2">
               <img 
-                src={user.avatar || "https://ui-avatars.com/api/?name=" + user.name} 
+                src={getAvatarUrl(user)} 
                 alt="User avatar" 
                 className="w-8 h-8 rounded-full object-cover" 
               />
@@ -89,7 +89,7 @@ const Header = ({ user, activeTab }: HeaderProps) => {
           </button>
           {user && (
             <img 
-              src={user.avatar || "https://ui-avatars.com/api/?name=" + user.name} 
+              src={getAvatarUrl(user)} 
               alt="User avatar" 
               className="w-8 h-8 rounded-full object-cover" 
             />
