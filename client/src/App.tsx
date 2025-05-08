@@ -33,7 +33,11 @@ function App() {
         <Route path="/trip/:id/edit" component={EditTrip} />
         <Route path="/my-trips" component={MyTrips} />
         <Route path="/browser">
-          {() => <BrowserPage user={currentUser} />}
+          {() => (
+            <div className="h-full w-full">
+              <BrowserPage user={currentUser} />
+            </div>
+          )}
         </Route>
         <Route component={NotFound} />
       </Switch>

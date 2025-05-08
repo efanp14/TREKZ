@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { User, Trip } from '@shared/schema';
 import { useSearchTrips, useDebounce } from '@/hooks/use-search';
-import Layout from '@/components/Layout';
 import TripCard from '@/components/TripCard';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -79,7 +78,7 @@ const BrowserPage = ({ user }: { user?: User }) => {
   };
 
   return (
-    <Layout user={user} activeTab="browser">
+    <div className="flex-grow overflow-auto">
       <div className="container mx-auto px-4 py-6">
         <h1 className="text-3xl font-heading font-bold mb-6 text-center">
           Browse Trips
@@ -195,7 +194,7 @@ const BrowserPage = ({ user }: { user?: User }) => {
           </div>
         )}
       </div>
-    </Layout>
+    </div>
   );
 };
 
