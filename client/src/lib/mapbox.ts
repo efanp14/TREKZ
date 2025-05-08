@@ -4,7 +4,7 @@ import mapboxgl from 'mapbox-gl';
 let markers: mapboxgl.Marker[] = [];
 
 // Initialize a map with default options
-export function initMap(container: HTMLElement, options: mapboxgl.MapOptions = {}): mapboxgl.Map {
+export function initMap(container: HTMLElement, options: Omit<mapboxgl.MapOptions, 'container'> = {}): mapboxgl.Map {
   // Use the Mapbox token from environment variables
   mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
   
