@@ -20,8 +20,8 @@ const RecentlyShared = ({ trips, isLoading }: RecentlySharedProps) => {
     <div className="px-4 md:px-8 pb-20 md:pb-8">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-heading font-bold text-neutral-800">Recently Shared</h2>
-        <Link href="/browse">
-          <span className="text-yellow-gold font-medium text-sm hover:underline cursor-pointer">
+        <Link href="/explore?section=recent">
+          <span className="text-primary-500 font-medium text-sm hover:underline cursor-pointer">
             View all
           </span>
         </Link>

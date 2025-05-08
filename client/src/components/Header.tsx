@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "wouter";
+import { Link } from "wouter";
 import { User } from "@shared/schema";
 import { Search, Map } from "lucide-react";
 import trekzLogo from "../assets/trekz-logo.png";
@@ -11,21 +11,10 @@ interface HeaderProps {
 
 const Header = ({ user, activeTab }: HeaderProps) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [, setLocation] = useLocation();
   
   // Helper function to get a fallback avatar if none is provided
   const getAvatarUrl = (user: User) => {
     return user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=F0E68C&color=333`;
-  };
-  
-  // Handle search submission
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      const params = new URLSearchParams();
-      params.set('search', searchQuery.trim());
-      setLocation(`/browse?${params.toString()}`);
-    }
   };
   
   return (
@@ -78,7 +67,7 @@ const Header = ({ user, activeTab }: HeaderProps) => {
           </nav>
         </div>
         <div className="flex items-center gap-4">
-          <form onSubmit={handleSearch} className="relative">
+          <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-yellow-mid h-4 w-4" />
             <input 
               type="text" 
@@ -86,9 +75,8 @@ const Header = ({ user, activeTab }: HeaderProps) => {
               className="trekz-input pl-10 pr-4 py-2 rounded-full w-64 focus:ring-2 focus:ring-yellow-gold focus:outline-none transition-shadow"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch(e)}
             />
-          </form>
+          </div>
           {user && (
             <div className="flex items-center gap-2 rounded-full bg-cream px-3 py-2 border border-yellow-light">
               <img 
@@ -121,10 +109,7 @@ const Header = ({ user, activeTab }: HeaderProps) => {
           </Link>
         </div>
         <div className="flex items-center gap-3">
-          <button 
-            className="p-2 rounded-full hover:bg-yellow-light/50 transition-colors"
-            onClick={() => setLocation('/browse')}
-          >
+          <button className="p-2 rounded-full hover:bg-yellow-light/50 transition-colors">
             <Search className="text-foreground h-5 w-5" />
           </button>
           {user && (
