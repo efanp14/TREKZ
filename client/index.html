@@ -19,6 +19,23 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Disable Mapbox telemetry by intercepting fetch requests -->
+    <script>
+      // Block telemetry requests before any other scripts load
+      const originalFetch = window.fetch;
+      window.fetch = function(url, options) {
+        // Check if the URL includes Mapbox telemetry endpoint
+        if (typeof url === 'string' && url.includes('events.mapbox.com/events')) {
+          // Return an immediately resolved promise with an empty response
+          return Promise.resolve(new Response(JSON.stringify({ success: true }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+          }));
+        }
+        // Otherwise proceed with the original fetch
+        return originalFetch.apply(this, arguments);
+      };
+    </script>
     <script type="module" src="/src/main.tsx"></script>
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
     <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
