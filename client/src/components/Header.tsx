@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { User } from "@shared/schema";
 import { Search, Map } from "lucide-react";
 import trekzLogo from "../assets/trekz-logo.png";
