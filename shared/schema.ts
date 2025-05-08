@@ -79,4 +79,5 @@ export const pinFormSchema = insertPinSchema.extend({
   title: z.string().min(2, { message: "Title must be at least 2 characters" }),
   longitude: z.string().min(1, { message: "Longitude is required" }),
   latitude: z.string().min(1, { message: "Latitude is required" }),
+  date: z.coerce.date(),
 });

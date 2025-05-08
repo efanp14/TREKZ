@@ -65,8 +65,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create a new trip
   app.post(apiPath("/trips"), async (req: Request, res: Response) => {
     try {
-      // Validate request body
-      const parsedBody = insertTripSchema.safeParse(req.body);
+      // Get default user
+      const user = await storage.getDefaultUser();
+      
+      // Validate request body with tripFormSchema (handles date coercion better)
+      const parsedBody = tripFormSchema.safeParse({
+        ...req.body,
+        userId: user.id // Add userId here so it's not required in the request
+      });
+      
       if (!parsedBody.success) {
         return res.status(400).json({ 
           message: "Invalid trip data", 
@@ -74,16 +81,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Get default user
-      const user = await storage.getDefaultUser();
-      
-      // Create trip with the default user ID
-      const tripData: InsertTrip = {
-        ...parsedBody.data,
-        userId: user.id,
-      };
-
-      const trip = await storage.createTrip(tripData);
+      const trip = await storage.createTrip(parsedBody.data);
       return res.status(201).json(trip);
     } catch (error) {
       console.error("Error creating trip:", error);
