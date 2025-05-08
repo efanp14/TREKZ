@@ -11,8 +11,8 @@ const HeroSection = () => {
               <div className="mb-3 inline-block bg-yellow-light px-4 py-1 rounded-full">
                 <span className="text-sm font-medium">Share Your Adventures</span>
               </div>
-              <h1 className="text-3xl md:text-5xl font-heading mb-4">
-                Map Your Journey with <span className="text-yellow-gold">Trekz</span>
+              <h1 className="text-4xl md:text-6xl font-heading mb-4">
+                Map Your Journey with <span className="text-yellow-gold">TREKZ</span>
               </h1>
               <p className="text-foreground/80 text-base md:text-lg mb-8">
                 Create interactive maps of your journeys, share photos, and inspire others with your travel adventures.

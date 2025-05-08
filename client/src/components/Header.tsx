@@ -27,18 +27,18 @@ const Header = ({ user, activeTab }: HeaderProps) => {
               <div className="flex items-center cursor-pointer">
                 <img 
                   src={trekzLogo} 
-                  alt="Trekz logo" 
+                  alt="TREKZ logo" 
                   className="h-24 w-24 object-contain mr-1" 
                 />
-                <h1 className="text-xl font-heading -ml-1 text-foreground">
-                  <span className="font-bold">Trekz</span>
+                <h1 className="text-2xl font-heading -ml-1 text-foreground">
+                  <span className="font-bold">TREKZ</span>
                 </h1>
               </div>
             </Link>
           </div>
           <nav className="flex gap-6">
             <Link href="/">
-              <span className={`font-heading font-medium py-2 cursor-pointer ${
+              <span className={`font-heading font-medium py-2 cursor-pointer text-lg ${
                 activeTab === 'explore' 
                 ? 'text-yellow-gold border-b-2 border-yellow-gold' 
                 : 'text-foreground hover:text-yellow-gold transition-colors'
@@ -47,7 +47,7 @@ const Header = ({ user, activeTab }: HeaderProps) => {
               </span>
             </Link>
             <Link href="/my-trips">
-              <span className={`font-heading font-medium py-2 cursor-pointer ${
+              <span className={`font-heading font-medium py-2 cursor-pointer text-lg ${
                 activeTab === 'my-trips' 
                 ? 'text-yellow-gold border-b-2 border-yellow-gold' 
                 : 'text-foreground hover:text-yellow-gold transition-colors'
@@ -56,7 +56,7 @@ const Header = ({ user, activeTab }: HeaderProps) => {
               </span>
             </Link>
             <Link href="/create">
-              <span className={`font-heading font-medium py-2 cursor-pointer ${
+              <span className={`font-heading font-medium py-2 cursor-pointer text-lg ${
                 activeTab === 'create' 
                 ? 'text-yellow-gold border-b-2 border-yellow-gold' 
                 : 'text-foreground hover:text-yellow-gold transition-colors'
@@ -99,11 +99,11 @@ const Header = ({ user, activeTab }: HeaderProps) => {
             <div className="flex items-center cursor-pointer">
               <img 
                 src={trekzLogo} 
-                alt="Trekz logo" 
+                alt="TREKZ logo" 
                 className="h-20 w-20 object-contain" 
               />
-              <h1 className="text-lg font-heading -ml-1">
-                <span className="font-bold">Trekz</span>
+              <h1 className="text-xl font-heading -ml-1">
+                <span className="font-bold">TREKZ</span>
               </h1>
             </div>
           </Link>

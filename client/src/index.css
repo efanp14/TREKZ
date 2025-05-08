@@ -180,7 +180,7 @@
   border: 1px solid hsl(var(--yellow-mid));
 }
 
-/* Trekz branding elements */
+/* TREKZ branding elements */
 
 .trekz-card {
   @apply rounded-xl overflow-hidden bg-white-soft;
