@@ -166,7 +166,7 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
     // Initialize the map with last pin location as center if available
     const mapInstance = initMap(mapContainerRef.current, {
       center: lastPinLocation || [-74.5, 40],
-      zoom: lastPinLocation ? 10 : 2
+      zoom: lastPinLocation ? 7 : 2
     });
     
     setMap(mapInstance);
@@ -315,11 +315,11 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
     // After adding a pin, center on the most recently added pin to make it easier
     // to add the next pin nearby, reducing the need for manual panning
     if (map) {
-      // Use the flyTo function to animate to the last pin location with a slightly zoomed view
+      // Use the flyTo function to animate to the last pin location with a zoom level that shows regional context
       flyToLocation(
         map,
         lastPinCoords,
-        10, // Zoomed in enough to see details but not too close
+        7, // Zoom level 7 shows more regional context for better navigation
         { duration: 1500 } // Slightly faster animation for better UX
       );
     }
