@@ -1,3 +1,7 @@
+VIEW THIS VIA THE README.md FILE IN CODE VIEWING
+
+https://github.com/efanp14/TREKZ/blob/main/README.md?plain=1
+
 Overview
 Table of Contents
 * Root Directory
