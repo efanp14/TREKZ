@@ -355,16 +355,63 @@ export class DatabaseStorage implements IStorage {
   
   // Method to seed initial data
   async seedInitialData(): Promise<void> {
-    // Check if we have any trips
-    const existingTrips = await db.select().from(trips);
+    // Delete existing data first
+    await db.delete(pins);
+    await db.delete(trips);
+    await db.delete(users);
     
-    // If we already have data, no need to seed
-    if (existingTrips.length > 0) {
-      return;
+    // Log that we're starting to seed data
+    console.log("Seeding comprehensive data for TripTales...");
+    
+    // Create mock users
+    const mockUsers: InsertUser[] = [
+      {
+        username: "alexmorgan",
+        name: "Alex Morgan",
+        bio: "Travel enthusiast and photographer. Exploring the world one trip at a time.",
+        avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&h=100",
+      },
+      {
+        username: "emilyjohnson",
+        name: "Emily Johnson",
+        bio: "Adventure seeker and foodie. Always planning my next trip.",
+        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&h=100",
+      },
+      {
+        username: "michaelwilson",
+        name: "Michael Wilson",
+        bio: "Hiking enthusiast and nature photographer. Finding beauty in remote places.",
+        avatar: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&h=100",
+      },
+      {
+        username: "sophiabrown",
+        name: "Sophia Brown",
+        bio: "Digital nomad and travel blogger. Living out of a suitcase since 2019.",
+        avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&h=100",
+      },
+      {
+        username: "danielgarcia",
+        name: "Daniel Garcia",
+        bio: "Urban explorer and street photographer. Finding the soul of cities around the world.",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&h=100",
+      },
+      {
+        username: "oliviamartinez",
+        name: "Olivia Martinez",
+        bio: "Culinary traveler and food critic. Tasting the world one meal at a time.",
+        avatar: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&h=100",
+      },
+    ];
+    
+    // Insert all users
+    const createdUsers: User[] = [];
+    for (const userData of mockUsers) {
+      const user = await this.createUser(userData);
+      createdUsers.push(user);
     }
     
-    // Get default user
-    const user = await this.getDefaultUser();
+    // Get a reference to Alex (default user)
+    const user = createdUsers[0];
     
     // Sample trips data
     const sampleTrips: InsertTrip[] = [
