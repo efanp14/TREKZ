@@ -6,7 +6,7 @@ import RecentlyShared from "@/components/RecentlyShared";
 import { Trip, Pin } from "@shared/schema";
 import { getTripById, getPinsByTripId } from "@/lib/api";
 
-const FEATURED_TRIP_ID = 86; // Italian Coast Expedition
+const FEATURED_TRIP_ID = 103; // Exploring Southeast Asia
 
 const Explore = () => {
   // Fetch trending trips
@@ -19,7 +19,7 @@ const Explore = () => {
     queryKey: ['/api/recent'],
   });
 
-  // Fetch the specific featured trip (Italian Coast Expedition)
+  // Fetch the specific featured trip (Exploring Southeast Asia)
   const { data: featuredTrip, isLoading: tripLoading } = useQuery<Trip>({
     queryKey: ['/api/trips', FEATURED_TRIP_ID],
     queryFn: () => getTripById(FEATURED_TRIP_ID),
