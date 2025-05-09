@@ -55,10 +55,10 @@ export function addMarker(map: mapboxgl.Map, lng: number, lat: number, index: nu
   // Create a custom marker element
   const el = document.createElement('div');
   el.className = 'custom-marker';
-  el.style.width = '30px';
-  el.style.height = '30px';
+  el.style.width = '32px';
+  el.style.height = '32px';
   el.style.borderRadius = '50%';
-  el.style.backgroundColor = '#3B82F6'; // primary-500
+  el.style.backgroundColor = '#2563EB'; // primary-600
   el.style.display = 'flex';
   el.style.alignItems = 'center';
   el.style.justifyContent = 'center';
@@ -66,7 +66,7 @@ export function addMarker(map: mapboxgl.Map, lng: number, lat: number, index: nu
   el.style.fontWeight = 'bold';
   el.style.fontSize = '14px';
   el.style.border = '2px solid white';
-  el.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+  el.style.boxShadow = '0 3px 6px rgba(0,0,0,0.25)';
   el.innerHTML = index.toString();
   
   // Create and add the marker
@@ -122,9 +122,9 @@ export function createRoute(map: mapboxgl.Map, coordinates: [number, number][]):
         'line-cap': 'round'
       },
       paint: {
-        'line-color': '#3B82F6',
+        'line-color': '#2563EB', // primary-600 
         'line-width': 3,
-        'line-opacity': 0.7
+        'line-opacity': 0.8
       }
     });
   }
