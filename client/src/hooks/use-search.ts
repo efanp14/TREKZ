@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getQueryFn } from '@/lib/queryClient';
 import type { Trip } from '@shared/schema';
+import { searchTrips as apiSearchTrips, type PaginationInfo, type SearchResult } from '@/lib/api';
 
 // Custom debounce hook for search inputs
 export function useDebounce<T>(value: T, delay: number): T {
@@ -20,20 +21,24 @@ export function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-// Hook to search trips with filtering and sorting
-export function useSearchTrips(queryText: string, sortBy: 'likes' | 'views' | 'date' = 'date') {
+// Re-export the interfaces from api.ts
+export type { PaginationInfo, SearchResult };
+
+// Hook to search trips with filtering, sorting, and pagination
+export function useSearchTrips(
+  queryText: string, 
+  sortBy: 'likes' | 'views' | 'date' = 'date',
+  page: number = 1,
+  limit: number = 20
+) {
   return useQuery({
-    queryKey: ['/api/search', queryText, sortBy],
+    queryKey: ['/api/search', queryText, sortBy, page, limit],
     queryFn: async ({ queryKey }) => {
-      const [_path, query, sort] = queryKey as [string, string, 'likes' | 'views' | 'date'];
-      const url = `/api/search?q=${encodeURIComponent(query || '')}&sortBy=${sort}`;
-      const response = await fetch(url);
+      const [_path, query, sort, pageNum, pageLimit] = queryKey as [
+        string, string, 'likes' | 'views' | 'date', number, number
+      ];
       
-      if (!response.ok) {
-        throw new Error('Failed to search trips');
-      }
-      
-      return response.json() as Promise<Trip[]>;
+      return apiSearchTrips(query || '', sort, pageNum, pageLimit);
     },
     enabled: true, 
     staleTime: 1000 * 60, // 1 minute

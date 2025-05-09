@@ -45,9 +45,28 @@ export async function likeTrip(tripId: number): Promise<Trip> {
   return response.json();
 }
 
-// Search trips with optional filtering
-export async function searchTrips(query: string, sortBy: 'likes' | 'views' | 'date' = 'date'): Promise<Trip[]> {
-  const url = `/api/search?q=${encodeURIComponent(query)}&sortBy=${sortBy}`;
+export interface PaginationInfo {
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+
+export interface SearchResult {
+  trips: Trip[];
+  pagination: PaginationInfo;
+}
+
+// Search trips with optional filtering and pagination
+export async function searchTrips(
+  query: string, 
+  sortBy: 'likes' | 'views' | 'date' = 'date',
+  page: number = 1,
+  limit: number = 20
+): Promise<SearchResult> {
+  const url = `/api/search?q=${encodeURIComponent(query)}&sortBy=${sortBy}&page=${page}&limit=${limit}`;
   const response = await apiRequest('GET', url);
   return response.json();
 }
