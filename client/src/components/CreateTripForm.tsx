@@ -318,14 +318,14 @@ const CreateTripForm = ({ onSubmit }: CreateTripFormProps) => {
                 )}
               </div>
               
-              {/* Hidden input to store the value */}
-              <input 
-                type="hidden" 
-                name={field.name}
-                value={field.value || ""}
-                onChange={field.onChange}
-                ref={field.ref}
-              />
+              {/* We don't actually need a hidden input here since we assign the value in handleFormSubmit */}
+              <FormControl>
+                <input 
+                  className="sr-only"
+                  {...field}
+                  value={field.value || ""}
+                />
+              </FormControl>
               
               <FormMessage />
             </FormItem>
