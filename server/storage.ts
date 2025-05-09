@@ -410,170 +410,342 @@ export class DatabaseStorage implements IStorage {
       createdUsers.push(user);
     }
     
-    // Get a reference to Alex (default user)
-    const user = createdUsers[0];
-    
-    // Sample trips data
-    const sampleTrips: InsertTrip[] = [
-      {
-        userId: user.id,
-        title: "Swiss Alps Journey",
-        summary: "Exploring the breathtaking mountain ranges and charming villages of Switzerland over two weeks.",
-        startDate: new Date("2023-04-12"),
-        endDate: new Date("2023-04-26"),
-        isPublic: true,
-        coverImage: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=500",
-        categories: ["Mountains", "Hiking", "Nature"],
-      },
-      {
-        userId: user.id,
-        title: "Southeast Asia Backpacking",
-        summary: "Three months exploring Thailand, Vietnam, Cambodia, and Indonesia. Best street foods and hidden beaches!",
-        startDate: new Date("2023-01-05"),
-        endDate: new Date("2023-03-25"),
-        isPublic: true,
-        coverImage: "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=500",
-        categories: ["Beach", "Food", "Culture"],
-      },
-      {
-        userId: user.id,
-        title: "American Southwest Road Trip",
-        summary: "Two weeks driving through Arizona, Utah, and New Mexico. National parks, hiking trails, and amazing sunsets.",
-        startDate: new Date("2023-05-08"),
-        endDate: new Date("2023-05-22"),
-        isPublic: true,
-        coverImage: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=500",
-        categories: ["Road Trip", "National Parks", "Desert"],
-      },
-      {
-        userId: user.id,
-        title: "Italian Coastal Dream",
-        summary: "A stunning two-week journey through Italy's most beautiful coastal towns, from the colorful villages of Cinque Terre to the cliffside beauty of the Amalfi Coast.",
-        startDate: new Date("2023-06-05"),
-        endDate: new Date("2023-06-19"),
-        isPublic: true,
-        coverImage: "https://images.unsplash.com/photo-1533575770077-052fa2c609fc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=500",
-        categories: ["Coastal", "Food & Wine", "Cultural", "Relaxation"],
-      },
-      {
-        userId: user.id,
-        title: "Island Hopping: Greek Isles",
-        summary: "Exploring the beautiful islands of Greece, their beaches, cuisine, and architecture.",
-        startDate: new Date("2023-07-10"),
-        endDate: new Date("2023-07-20"),
-        isPublic: true,
-        coverImage: "https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600",
-        categories: ["Island", "Beach", "Culture"],
-      },
-      {
-        userId: user.id,
-        title: "Tokyo: Modern Meets Traditional",
-        summary: "Exploring the contrast between modern technology and traditional culture in Tokyo.",
-        startDate: new Date("2023-08-05"),
-        endDate: new Date("2023-08-13"),
-        isPublic: true,
-        coverImage: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600",
-        categories: ["Urban", "Culture", "Food"],
-      },
-      {
-        userId: user.id,
-        title: "Pacific Northwest Trek",
-        summary: "Hiking through the forests and mountains of the Pacific Northwest.",
-        startDate: new Date("2023-09-01"),
-        endDate: new Date("2023-09-07"),
-        isPublic: true,
-        coverImage: "https://images.unsplash.com/photo-1533240332313-0db49b459ad6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600",
-        categories: ["Hiking", "Nature", "Photography"],
-      },
-      {
-        userId: user.id,
-        title: "Historic European Capitals",
-        summary: "Traveling through the historic capitals of Europe, exploring architecture and history.",
-        startDate: new Date("2023-10-01"),
-        endDate: new Date("2023-10-15"),
-        isPublic: true,
-        coverImage: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&h=600",
-        categories: ["Urban", "History", "Culture"],
-      }
-    ];
-    
-    // Insert trips
-    for (const tripData of sampleTrips) {
-      const trip = await this.createTrip({
-        ...tripData,
-        // Add random view and like counts
-        viewCount: Math.floor(Math.random() * 5000),
-        likeCount: Math.floor(Math.random() * 600),
-      } as any); // Type assertion to include viewCount/likeCount
+    // Function to create trips and pins
+    const createTripsForUser = async (userId: number, numTrips: number) => {
+      // Travel regions with coordinates, descriptions, and activities
+      const regions = [
+        {
+          name: "Swiss Alps",
+          description: "Breathtaking mountain ranges and charming alpine villages of Switzerland",
+          coordinates: [
+            { title: "Zermatt", lon: "7.7457", lat: "46.0207" },
+            { title: "Interlaken", lon: "7.8632", lat: "46.6863" },
+            { title: "Lucerne", lon: "8.3093", lat: "47.0502" },
+            { title: "St. Moritz", lon: "9.8345", lat: "46.4908" },
+            { title: "Grindelwald", lon: "8.0325", lat: "46.6249" },
+            { title: "Lauterbrunnen", lon: "7.9084", lat: "46.5936" },
+            { title: "Montreux", lon: "6.9106", lat: "46.4312" }
+          ],
+          activities: ["Hiking", "Skiing", "Photography", "Mountain Biking", "Cable Cars", "Village Tours"],
+          coverImages: [
+            "https://images.unsplash.com/photo-1531210483974-4f8c1f33fd35?auto=format&fit=crop&w=800&h=500",
+            "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&h=500"
+          ],
+          categories: ["Mountains", "Hiking", "Nature", "Adventure"]
+        },
+        {
+          name: "Southeast Asia",
+          description: "Vibrant cultures, ancient temples, bustling street food scenes, and tropical beaches",
+          coordinates: [
+            { title: "Bangkok", lon: "100.5018", lat: "13.7563" },
+            { title: "Chiang Mai", lon: "98.9873", lat: "18.7883" },
+            { title: "Hanoi", lon: "105.8342", lat: "21.0278" },
+            { title: "Ha Long Bay", lon: "107.0227", lat: "20.9101" },
+            { title: "Siem Reap", lon: "103.8601", lat: "13.3633" },
+            { title: "Bali", lon: "115.1889", lat: "-8.4095" },
+            { title: "Phuket", lon: "98.3380", lat: "7.9519" }
+          ],
+          activities: ["Temple Visits", "Street Food", "Beach Time", "Cooking Classes", "Boat Tours", "Elephant Sanctuaries"],
+          coverImages: [
+            "https://images.unsplash.com/photo-1512291313931-d4291048e7b6?auto=format&fit=crop&w=800&h=500",
+            "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=800&h=500"
+          ],
+          categories: ["Beach", "Food", "Culture", "Temples", "Adventure"]
+        },
+        {
+          name: "American Southwest",
+          description: "Stunning red rock formations, vast desert landscapes, and iconic national parks",
+          coordinates: [
+            { title: "Grand Canyon", lon: "-112.1124", lat: "36.0544" },
+            { title: "Zion National Park", lon: "-113.0263", lat: "37.2982" },
+            { title: "Bryce Canyon", lon: "-112.1871", lat: "37.6283" },
+            { title: "Arches National Park", lon: "-109.5861", lat: "38.7331" },
+            { title: "Monument Valley", lon: "-110.1734", lat: "36.9838" },
+            { title: "Sedona", lon: "-111.7603", lat: "34.8697" },
+            { title: "Antelope Canyon", lon: "-111.3743", lat: "36.8619" }
+          ],
+          activities: ["Hiking", "Photography", "Star Gazing", "Jeep Tours", "River Rafting", "Ranger Programs"],
+          coverImages: [
+            "https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?auto=format&fit=crop&w=800&h=500",
+            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&h=500"
+          ],
+          categories: ["National Parks", "Desert", "Road Trip", "Hiking", "Nature"]
+        },
+        {
+          name: "Italian Coast",
+          description: "Beautiful coastal towns, crystal-clear Mediterranean waters, and delicious cuisine",
+          coordinates: [
+            { title: "Cinque Terre", lon: "9.7084", lat: "44.1474" },
+            { title: "Florence", lon: "11.2558", lat: "43.7696" },
+            { title: "Sorrento", lon: "14.3757", lat: "40.6263" },
+            { title: "Amalfi", lon: "14.6025", lat: "40.6340" },
+            { title: "Positano", lon: "14.4833", lat: "40.6281" },
+            { title: "Capri", lon: "14.2401", lat: "40.5532" },
+            { title: "Portofino", lon: "9.2094", lat: "44.3032" }
+          ],
+          activities: ["Beach Time", "Boat Tours", "Wine Tasting", "Italian Cooking", "Shopping", "Historical Sites"],
+          coverImages: [
+            "https://images.unsplash.com/photo-1533575770077-052fa2c609fc?auto=format&fit=crop&w=800&h=500",
+            "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=800&h=500"
+          ],
+          categories: ["Coastal", "Food & Wine", "Cultural", "Relaxation", "Mediterranean"]
+        },
+        {
+          name: "Greek Islands",
+          description: "Idyllic white-washed villages, crystal-clear blue waters, and ancient ruins",
+          coordinates: [
+            { title: "Santorini", lon: "25.4615", lat: "36.3932" },
+            { title: "Mykonos", lon: "25.3291", lat: "37.4467" },
+            { title: "Crete", lon: "24.8093", lat: "35.2401" },
+            { title: "Rhodes", lon: "28.2208", lat: "36.4344" },
+            { title: "Naxos", lon: "25.3758", lat: "37.1036" },
+            { title: "Paros", lon: "25.1442", lat: "37.0856" },
+            { title: "Athens", lon: "23.7275", lat: "37.9838" }
+          ],
+          activities: ["Island Hopping", "Beach Days", "Greek Cuisine", "Ancient Sites", "Boat Tours", "Water Sports"],
+          coverImages: [
+            "https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?auto=format&fit=crop&w=800&h=600",
+            "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=800&h=600"
+          ],
+          categories: ["Island", "Beach", "Culture", "Ancient History", "Mediterranean"]
+        },
+        {
+          name: "Japan",
+          description: "A fascinating blend of ancient traditions and cutting-edge technology, with beautiful natural landscapes",
+          coordinates: [
+            { title: "Tokyo", lon: "139.6503", lat: "35.6762" },
+            { title: "Kyoto", lon: "135.7681", lat: "35.0116" },
+            { title: "Osaka", lon: "135.5023", lat: "34.6937" },
+            { title: "Nara", lon: "135.8048", lat: "34.6851" },
+            { title: "Hakone", lon: "139.1069", lat: "35.2324" },
+            { title: "Hiroshima", lon: "132.4553", lat: "34.3853" },
+            { title: "Mount Fuji", lon: "138.7274", lat: "35.3606" }
+          ],
+          activities: ["Temple Visits", "Cherry Blossom Viewing", "Bullet Train Travel", "Traditional Tea Ceremonies", "Food Tours", "Hot Springs"],
+          coverImages: [
+            "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800&h=600",
+            "https://images.unsplash.com/photo-1492571350019-22de08371fd3?auto=format&fit=crop&w=800&h=600"
+          ],
+          categories: ["Urban", "Culture", "Food", "Technology", "Tradition"]
+        },
+        {
+          name: "Pacific Northwest",
+          description: "Rugged coastlines, lush rainforests, dramatic mountains, and vibrant cities",
+          coordinates: [
+            { title: "Seattle", lon: "-122.3321", lat: "47.6062" },
+            { title: "Portland", lon: "-122.6795", lat: "45.5152" },
+            { title: "Olympic National Park", lon: "-123.6683", lat: "47.8021" },
+            { title: "Mount Rainier", lon: "-121.7603", lat: "46.8800" },
+            { title: "Crater Lake", lon: "-122.1684", lat: "42.9446" },
+            { title: "Columbia River Gorge", lon: "-121.9785", lat: "45.7253" },
+            { title: "Vancouver", lon: "-123.1207", lat: "49.2827" }
+          ],
+          activities: ["Hiking", "Photography", "Coffee Culture", "Whale Watching", "Craft Beer Tasting", "Kayaking"],
+          coverImages: [
+            "https://images.unsplash.com/photo-1533240332313-0db49b459ad6?auto=format&fit=crop&w=800&h=600",
+            "https://images.unsplash.com/photo-1506710507565-203b9f24669b?auto=format&fit=crop&w=800&h=600"
+          ],
+          categories: ["Hiking", "Nature", "Photography", "Outdoors", "Urban Exploration"]
+        },
+        {
+          name: "Northern Europe",
+          description: "Historic cities, stunning architecture, vibrant cultural scenes, and picturesque countryside",
+          coordinates: [
+            { title: "Copenhagen", lon: "12.5683", lat: "55.6761" },
+            { title: "Stockholm", lon: "18.0686", lat: "59.3293" },
+            { title: "Oslo", lon: "10.7522", lat: "59.9139" },
+            { title: "Helsinki", lon: "24.9384", lat: "60.1695" },
+            { title: "Bergen", lon: "5.3221", lat: "60.3913" },
+            { title: "Reykjavik", lon: "-21.9426", lat: "64.1466" },
+            { title: "Tallinn", lon: "24.7536", lat: "59.4370" }
+          ],
+          activities: ["City Tours", "Museum Visits", "Northern Lights", "Fjord Cruises", "Design Exploration", "Local Cuisine"],
+          coverImages: [
+            "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=800&h=600",
+            "https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=800&h=600"
+          ],
+          categories: ["Urban", "History", "Design", "Nature", "Architecture"]
+        },
+        {
+          name: "South America",
+          description: "Stunning landscapes, vibrant cultures, ancient ruins, and diverse ecosystems",
+          coordinates: [
+            { title: "Machu Picchu", lon: "-77.0365", lat: "-13.1631" },
+            { title: "Rio de Janeiro", lon: "-43.1729", lat: "-22.9068" },
+            { title: "Buenos Aires", lon: "-58.3816", lat: "-34.6037" },
+            { title: "Cusco", lon: "-71.9675", lat: "-13.5320" },
+            { title: "Galapagos Islands", lon: "-91.0839", lat: "-0.8295" },
+            { title: "Amazon Rainforest", lon: "-60.0000", lat: "-3.0000" },
+            { title: "Iguazu Falls", lon: "-54.4380", lat: "-25.6953" }
+          ],
+          activities: ["Hiking", "Wildlife Watching", "Cultural Immersion", "Tango Dancing", "Boat Tours", "Samba Lessons"],
+          coverImages: [
+            "https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=800&h=600",
+            "https://images.unsplash.com/photo-1460306855393-0410f61241c7?auto=format&fit=crop&w=800&h=600"
+          ],
+          categories: ["Nature", "Adventure", "Culture", "Rainforest", "Historic Sites"]
+        },
+        {
+          name: "Australia & New Zealand",
+          description: "Breathtaking landscapes, unique wildlife, vibrant cities, and incredible outdoor adventures",
+          coordinates: [
+            { title: "Sydney", lon: "151.2093", lat: "-33.8688" },
+            { title: "Great Barrier Reef", lon: "145.7000", lat: "-16.2864" },
+            { title: "Uluru", lon: "131.0369", lat: "-25.3444" },
+            { title: "Auckland", lon: "174.7633", lat: "-36.8485" },
+            { title: "Queenstown", lon: "168.6626", lat: "-45.0312" },
+            { title: "Melbourne", lon: "144.9631", lat: "-37.8136" },
+            { title: "Milford Sound", lon: "167.9256", lat: "-44.6414" }
+          ],
+          activities: ["Snorkeling", "Hiking", "Wildlife Spotting", "Adventure Sports", "Wine Tasting", "Indigenous Culture"],
+          coverImages: [
+            "https://images.unsplash.com/photo-1530786948735-8ad957dfe6ff?auto=format&fit=crop&w=800&h=600",
+            "https://images.unsplash.com/photo-1624138784614-87fd1b6528f8?auto=format&fit=crop&w=800&h=600"
+          ],
+          categories: ["Adventure", "Nature", "Wildlife", "Beach", "Outdoor"]
+        }
+      ];
       
-      // Special case: Add pins for Italian Coastal Dream
-      if (trip.title === "Italian Coastal Dream") {
-        // Add pins
-        const pins: InsertPin[] = [
-          {
-            tripId: trip.id,
-            title: "Cinque Terre",
-            description: "Explored the colorful cliff-side villages of the Cinque Terre. Hiked between towns and took amazing coastal photos.",
-            longitude: "9.7084",
-            latitude: "44.1474",
-            date: new Date("2023-06-05"),
-            order: 1,
-            activities: ["Hiking", "Photography"],
-            photos: [
-              "https://images.unsplash.com/photo-1499678329028-101435549a4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&h=800", 
-              "https://images.unsplash.com/photo-1533575770077-052fa2c609fc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&h=800"
-            ],
-          },
-          {
-            tripId: trip.id,
-            title: "Florence",
-            description: "Visited world-class museums and enjoyed amazing Italian cuisine in this Renaissance city.",
-            longitude: "11.2558",
-            latitude: "43.7696",
-            date: new Date("2023-06-09"),
-            order: 2,
-            activities: ["Museums", "Dining"],
-            photos: [
-              "https://images.unsplash.com/photo-1543429776-2782fc8e1acd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&h=800", 
-              "https://images.unsplash.com/photo-1534445867742-43195f401b6c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&h=800"
-            ],
-          },
-          {
-            tripId: trip.id,
-            title: "Sorrento",
-            description: "Relaxed in this beautiful coastal town with stunning views of the Bay of Naples.",
-            longitude: "14.3757",
-            latitude: "40.6263",
-            date: new Date("2023-06-12"),
-            order: 3,
-            activities: ["Beaches", "Boat Tours"],
-            photos: [
-              "https://images.unsplash.com/photo-1564594822929-48e1bca6a95a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&h=800", 
-              "https://images.unsplash.com/photo-1559678478-1fa45c5dd7f8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&h=800"
-            ],
-          },
-          {
-            tripId: trip.id,
-            title: "Amalfi Coast",
-            description: "Drove along the stunning Amalfi Coast, stopping at picturesque towns like Positano and Amalfi.",
-            longitude: "14.6027",
-            latitude: "40.6340",
-            date: new Date("2023-06-16"),
-            order: 4,
-            activities: ["Scenic Drives", "Relaxation"],
-            photos: [
-              "https://images.unsplash.com/photo-1533606797125-ff3f882f5282?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&h=800", 
-              "https://images.unsplash.com/photo-1560860446-c821e910a0a7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&h=800"
-            ],
-          },
+      // Generate trips
+      const trips: Trip[] = [];
+      for (let i = 0; i < numTrips; i++) {
+        // Select a random region
+        const region = regions[Math.floor(Math.random() * regions.length)];
+        
+        // Generate random dates within the last 18 months
+        const endDate = new Date();
+        endDate.setMonth(endDate.getMonth() - Math.floor(Math.random() * 18));
+        const startDate = new Date(endDate);
+        startDate.setDate(startDate.getDate() - (7 + Math.floor(Math.random() * 14))); // 1-3 week trip
+        
+        // Generate trip title variations
+        const titles = [
+          `${region.name} Adventure`,
+          `Exploring ${region.name}`,
+          `${region.name} Discovery`,
+          `${region.name} Memories`,
+          `Journey Through ${region.name}`,
+          `${region.name} Expedition`,
+          `${region.name} Wonders`,
+          `${region.name} Experience`,
+          `${region.name} Escapade`
         ];
         
-        // Add each pin
-        for (const pinData of pins) {
-          await this.createPin(pinData);
+        // Select a random title
+        const title = titles[Math.floor(Math.random() * titles.length)];
+        
+        // Generate a detailed summary with about 150 words
+        const summary = `${region.description}. This unforgettable journey through ${region.name} offered a perfect blend of adventure, culture, and relaxation. From exploring hidden gems to immersing in local traditions, each day brought new discoveries and lasting memories. The breathtaking landscapes, friendly locals, and authentic experiences made this trip truly special. Whether it was sampling local cuisine, learning about ancient history, or simply enjoying the natural beauty, this trip exceeded all expectations and left me with a deep appreciation for the unique charm of ${region.name}.`;
+        
+        // Select 3-5 random categories
+        const shuffledCategories = [...region.categories].sort(() => 0.5 - Math.random());
+        const selectedCategories = shuffledCategories.slice(0, 3 + Math.floor(Math.random() * 3));
+        
+        // Select random cover image
+        const coverImage = region.coverImages[Math.floor(Math.random() * region.coverImages.length)];
+        
+        // Create the trip
+        const trip = await this.createTrip({
+          userId,
+          title,
+          summary,
+          startDate,
+          endDate,
+          isPublic: true,
+          coverImage,
+          categories: selectedCategories,
+          viewCount: Math.floor(Math.random() * 5000),
+          likeCount: Math.floor(Math.random() * 600),
+        } as any);
+        
+        trips.push(trip);
+        
+        // Create 5-8 pins for this trip
+        // Shuffle the coordinates
+        const shuffledCoordinates = [...region.coordinates].sort(() => 0.5 - Math.random());
+        
+        // Select 5-8 random locations
+        const numPins = 5 + Math.floor(Math.random() * 4);
+        const selectedLocations = shuffledCoordinates.slice(0, numPins);
+        
+        // Create pins for this trip
+        for (let j = 0; j < selectedLocations.length; j++) {
+          const location = selectedLocations[j];
+          
+          // Calculate date for this pin
+          const pinDate = new Date(startDate);
+          pinDate.setDate(pinDate.getDate() + Math.floor(j * (endDate.getTime() - startDate.getTime()) / (selectedLocations.length * 24 * 60 * 60 * 1000)));
+          
+          // Select 2-3 random activities
+          const shuffledActivities = [...region.activities].sort(() => 0.5 - Math.random());
+          const selectedActivities = shuffledActivities.slice(0, 2 + Math.floor(Math.random() * 2));
+          
+          // Generate pin description
+          const descriptions = [
+            `Spent the day exploring ${location.title}. ${selectedActivities.join(" and ")} were the highlights of this amazing place.`,
+            `Discovered the beauty of ${location.title}. Absolutely loved the ${selectedActivities.join(" and ")}.`,
+            `${location.title} was breathtaking! Enjoyed ${selectedActivities.join(" and ")} while taking in the incredible views.`,
+            `Explored ${location.title} today. The ${selectedActivities[0]} was unforgettable.`,
+            `Day trip to ${location.title}. Couldn't get enough of the ${selectedActivities.join(" and ")}.`
+          ];
+          
+          const description = descriptions[Math.floor(Math.random() * descriptions.length)];
+          
+          // Generate random photos (URLs from Unsplash)
+          const photoBaseUrls = [
+            "https://images.unsplash.com/photo-1488646953014-85cb44e25828",
+            "https://images.unsplash.com/photo-1502602898657-3e91760cbb34",
+            "https://images.unsplash.com/photo-1505118380757-91f5f5632de0",
+            "https://images.unsplash.com/photo-1499363536502-87642509e31b",
+            "https://images.unsplash.com/photo-1514565131-fce0801e5785",
+            "https://images.unsplash.com/photo-1475688621402-4257c812d6db",
+            "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4",
+            "https://images.unsplash.com/photo-1517760444937-f6397edcbbcd",
+            "https://images.unsplash.com/photo-1520466809213-7b9a56adcd45",
+            "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b",
+            "https://images.unsplash.com/photo-1486299267070-83823f5448dd",
+            "https://images.unsplash.com/photo-1459058537932-d95b3e968a81",
+            "https://images.unsplash.com/photo-1491331941906-5b8fb02aef42",
+            "https://images.unsplash.com/photo-1504214208698-ea1916a2195a"
+          ];
+          
+          // Select 1-3 random photos
+          const numPhotos = 1 + Math.floor(Math.random() * 3);
+          const shuffledPhotos = [...photoBaseUrls].sort(() => 0.5 - Math.random());
+          const selectedPhotos = shuffledPhotos.slice(0, numPhotos).map(url => 
+            `${url}?auto=format&fit=crop&w=1200&h=800`
+          );
+          
+          // Create the pin
+          await this.createPin({
+            tripId: trip.id,
+            title: location.title,
+            description,
+            longitude: location.lon,
+            latitude: location.lat,
+            date: pinDate,
+            order: j + 1,
+            activities: selectedActivities,
+            photos: selectedPhotos,
+          });
         }
       }
+      
+      return trips;
+    };
+    
+    // Create trips for each user
+    console.log("Creating trips for users...");
+    const tripDistribution = [5, 4, 4, 3, 3, 3]; // Total: 22 trips
+    
+    for (let i = 0; i < createdUsers.length; i++) {
+      const user = createdUsers[i];
+      const numTrips = tripDistribution[i];
+      console.log(`Creating ${numTrips} trips for user ${user.name}...`);
+      await createTripsForUser(user.id, numTrips);
     }
+    
+    console.log("Seed data creation complete with 6 users and 22 trips!");
   }
 }
 
