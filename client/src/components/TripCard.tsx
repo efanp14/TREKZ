@@ -1,9 +1,10 @@
 import { Link } from "wouter";
-import { Trip } from "@shared/schema";
+import { Trip, Pin } from "@shared/schema";
 import { MapPin, Eye, Heart } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { User } from "@shared/schema";
 import { formatDistanceToNow, format } from "date-fns";
+import { getUserById, getPinsByTripId } from "@/lib/api";
 
 interface TripCardProps {
   trip: Trip;
@@ -11,9 +12,16 @@ interface TripCardProps {
 }
 
 const TripCard = ({ trip, showDate = "range" }: TripCardProps) => {
-  // Get user data for the trip
-  const { data: user } = useQuery<User>({
-    queryKey: ['/api/auth/me'],
+  // Get the trip creator's user data
+  const { data: tripUser, isLoading: isUserLoading } = useQuery<User>({
+    queryKey: ['/api/users', trip.userId],
+    queryFn: () => getUserById(trip.userId),
+  });
+  
+  // Get the pins for this trip to count locations
+  const { data: tripPins } = useQuery<Pin[]>({
+    queryKey: ['/api/trips', trip.id, 'pins'],
+    queryFn: () => getPinsByTripId(trip.id),
   });
 
   // Format dates based on the showDate prop
@@ -46,7 +54,7 @@ const TripCard = ({ trip, showDate = "range" }: TripCardProps) => {
           <div className="absolute top-3 right-3 bg-yellow-light border border-yellow-mid backdrop-blur-sm rounded-full px-3 py-1 text-xs font-medium">
             <MapPin className="inline-block h-3 w-3 text-yellow-gold mr-1" />
             <span>
-              {Math.floor(Math.random() * 10) + 2} locations
+              {tripPins ? tripPins.length : '...'} locations
             </span>
           </div>
           <div className="absolute bottom-3 left-3">
@@ -54,16 +62,21 @@ const TripCard = ({ trip, showDate = "range" }: TripCardProps) => {
           </div>
         </div>
         <div className="p-4">
-          {user && (
+          {tripUser ? (
             <div className="flex items-center gap-2 mb-2">
               <img 
-                src={user.avatar || ''} 
-                alt="User avatar" 
+                src={tripUser.avatar || ''} 
+                alt={`${tripUser.name}'s avatar`}
                 className="w-6 h-6 rounded-full object-cover border border-yellow-light"
               />
-              <span className="text-sm font-medium">{user.name}</span>
+              <span className="text-sm font-medium">{tripUser.name}</span>
             </div>
-          )}
+          ) : isUserLoading ? (
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-6 h-6 rounded-full bg-cream animate-pulse"></div>
+              <div className="w-24 h-4 bg-cream animate-pulse rounded"></div>
+            </div>
+          ) : null}
           <p className="text-sm text-foreground/80 mb-3 line-clamp-2">{trip.summary}</p>
           
           <div className="flex items-center justify-between">
