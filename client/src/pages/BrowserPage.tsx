@@ -166,7 +166,7 @@ const BrowserPage = ({ user }: { user?: User }) => {
         
         {/* Loading state */}
         {isLoading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="trip-list h-[calc(100vh-320px)] overflow-y-auto pr-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="h-64 bg-cream animate-pulse rounded-xl"></div>
             ))}
@@ -175,7 +175,7 @@ const BrowserPage = ({ user }: { user?: User }) => {
         
         {/* Results grid */}
         {!isLoading && searchResults && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="trip-list h-[calc(100vh-320px)] overflow-y-auto pr-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {searchResults.map((trip) => (
               <div key={trip.id} onClick={() => handleTripClick(trip.id)} className="cursor-pointer">
                 <TripCard trip={trip} showDate="range" />
