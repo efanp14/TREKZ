@@ -68,6 +68,9 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
   
+  // Store the last pin location to center on after adding a new pin
+  const [lastPinLocation, setLastPinLocation] = useState<[number, number] | null>(null);
+  
   // City search state
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
@@ -160,10 +163,10 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
   useEffect(() => {
     if (!mapContainerRef.current) return;
     
-    // Initialize the map
+    // Initialize the map with last pin location as center if available
     const mapInstance = initMap(mapContainerRef.current, {
-      center: [-74.5, 40],
-      zoom: 2
+      center: lastPinLocation || [-74.5, 40],
+      zoom: lastPinLocation ? 10 : 2
     });
     
     setMap(mapInstance);
@@ -195,7 +198,7 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
     return () => {
       mapInstance.remove();
     };
-  }, [pins]);
+  }, [pins, lastPinLocation]);
 
   // Function to handle image upload
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -269,6 +272,14 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
     data.activities = selectedActivities;
     data.photos = imageUrls;
     
+    // Store the last pin location for future use
+    // This is vital as it will be used when the component remounts
+    const lastPinCoords: [number, number] = [
+      parseFloat(data.longitude),
+      parseFloat(data.latitude)
+    ];
+    setLastPinLocation(lastPinCoords);
+    
     onAddPin(data);
     
     // Reset form and selections
@@ -303,11 +314,11 @@ const PinEditor = ({ trip, pins, onAddPin, onComplete }: PinEditorProps) => {
     
     // After adding a pin, center on the most recently added pin to make it easier
     // to add the next pin nearby, reducing the need for manual panning
-    if (map && data.longitude && data.latitude) {
+    if (map) {
       // Use the flyTo function to animate to the last pin location with a slightly zoomed view
       flyToLocation(
         map,
-        [parseFloat(data.longitude), parseFloat(data.latitude)],
+        lastPinCoords,
         10, // Zoomed in enough to see details but not too close
         { duration: 1500 } // Slightly faster animation for better UX
       );
