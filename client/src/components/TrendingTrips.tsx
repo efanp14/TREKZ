@@ -13,7 +13,7 @@ const TrendingTrips = ({ trips, isLoading }: TrendingTripsProps) => {
     <div className="px-4 md:px-8 mb-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-heading font-bold text-neutral-800">Trending Trips</h2>
-        <Link href="/explore?section=trending">
+        <Link href="/browser?section=trending">
           <span className="text-primary-500 font-medium text-sm hover:underline cursor-pointer">
             View all
           </span>

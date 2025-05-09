@@ -24,7 +24,7 @@ const HeroSection = () => {
                     Create New Trip
                   </div>
                 </Link>
-                <Link href="/explore">
+                <Link href="/browser">
                   <div className="button-secondary px-6 py-3 rounded-lg flex items-center gap-2 inline-flex cursor-pointer font-heading">
                     <Map className="h-5 w-5" />
                     Explore Trips
