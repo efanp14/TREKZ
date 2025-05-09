@@ -6,28 +6,28 @@ import RecentlyShared from "@/components/RecentlyShared";
 import { Trip, Pin } from "@shared/schema";
 import { getTripById, getPinsByTripId } from "@/lib/api";
 
-const FEATURED_TRIP_ID = 103; // Exploring Southeast Asia
+const FEATURED_TRIP_ID = 190; // Exploring Southeast Asia
 
 const Explore = () => {
   // Fetch trending trips
   const { data: trendingTrips, isLoading: trendingLoading } = useQuery<Trip[]>({
-    queryKey: ['/api/trending'],
+    queryKey: ["/api/trending"],
   });
 
   // Fetch recent trips
   const { data: recentTrips, isLoading: recentLoading } = useQuery<Trip[]>({
-    queryKey: ['/api/recent'],
+    queryKey: ["/api/recent"],
   });
 
   // Fetch the specific featured trip (Exploring Southeast Asia)
   const { data: featuredTrip, isLoading: tripLoading } = useQuery<Trip>({
-    queryKey: ['/api/trips', FEATURED_TRIP_ID],
+    queryKey: ["/api/trips", FEATURED_TRIP_ID],
     queryFn: () => getTripById(FEATURED_TRIP_ID),
   });
-  
+
   // Fetch pins for the featured trip
   const { data: featuredTripPins, isLoading: pinsLoading } = useQuery<Pin[]>({
-    queryKey: ['/api/trips', FEATURED_TRIP_ID, 'pins'],
+    queryKey: ["/api/trips", FEATURED_TRIP_ID, "pins"],
     queryFn: () => getPinsByTripId(FEATURED_TRIP_ID),
     enabled: !!featuredTrip,
   });
@@ -38,24 +38,18 @@ const Explore = () => {
   return (
     <div className="flex-grow overflow-auto">
       <HeroSection />
-      
-      <TrendingTrips 
-        trips={trendingTrips || []} 
-        isLoading={trendingLoading} 
-      />
-      
+
+      <TrendingTrips trips={trendingTrips || []} isLoading={trendingLoading} />
+
       {featuredTrip && (
-        <FeaturedTrip 
-          trip={featuredTrip} 
-          pins={featuredTripPins || []} 
+        <FeaturedTrip
+          trip={featuredTrip}
+          pins={featuredTripPins || []}
           isLoading={isFeaturedLoading}
         />
       )}
-      
-      <RecentlyShared 
-        trips={recentTrips || []} 
-        isLoading={recentLoading} 
-      />
+
+      <RecentlyShared trips={recentTrips || []} isLoading={recentLoading} />
     </div>
   );
 };
