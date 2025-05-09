@@ -22,6 +22,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { getTripById, getPinsByTripId } from "@/lib/api";
+import { PhotoDisplay } from "@/components/PhotoDisplay";
 
 const TripDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -224,12 +225,12 @@ const TripDetails = () => {
                 {/* Trip Author */}
                 {user && (
                   <div className="flex items-center gap-3 mb-4 p-3 bg-neutral-50 rounded-lg">
-                    <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
+                    <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 overflow-hidden">
                       {user.avatar ? (
-                        <img 
-                          src={user.avatar} 
+                        <PhotoDisplay 
+                          photo={user.avatar} 
                           alt={user.name} 
-                          className="w-full h-full rounded-full object-cover"
+                          showPlaceholder={false}
                         />
                       ) : (
                         <span className="font-medium">{user.name.charAt(0).toUpperCase()}</span>
@@ -321,6 +322,17 @@ const TripDetails = () => {
                         {pin.description && (
                           <p className="text-sm text-neutral-600 mb-3 line-clamp-2">{pin.description}</p>
                         )}
+                        
+                        {/* Photo Preview (if available) */}
+                        {pin.photos && pin.photos.length > 0 && (
+                          <div className="mb-3 rounded-lg overflow-hidden aspect-video">
+                            <PhotoDisplay 
+                              photo={pin.photos[0]} 
+                              alt={`Photo from ${pin.title}`}
+                            />
+                          </div>
+                        )}
+                        
                         <div className="flex flex-wrap gap-2 mb-3">
                           {pin.activities && pin.activities.map((activity, i) => (
                             <span key={i} className="bg-neutral-100 text-neutral-700 text-xs px-2 py-1 rounded-full">
@@ -364,10 +376,10 @@ const TripDetails = () => {
                       .slice(0, 6)
                       .map((item, index) => (
                         <div key={index} className="relative aspect-square rounded-lg overflow-hidden group">
-                          <img 
-                            src={item.photo} 
-                            alt={`Photo from ${item.pinTitle}`} 
-                            className="w-full h-full object-cover transition-transform group-hover:scale-105" 
+                          <PhotoDisplay
+                            photo={item.photo}
+                            alt={`Photo from ${item.pinTitle}`}
+                            className="transition-transform group-hover:scale-105"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
                             <span className="text-white text-xs p-2">{item.pinTitle}</span>
@@ -384,10 +396,9 @@ const TripDetails = () => {
             {trip.coverImage && (
               <Card className="shadow-sm border-0 overflow-hidden">
                 <div className="aspect-video w-full">
-                  <img 
-                    src={trip.coverImage} 
+                  <PhotoDisplay 
+                    photo={trip.coverImage} 
                     alt={`Cover image for ${trip.title}`} 
-                    className="w-full h-full object-cover"
                   />
                 </div>
               </Card>
