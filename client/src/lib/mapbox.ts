@@ -58,7 +58,8 @@ export function addMarker(map: mapboxgl.Map, lng: number, lat: number, index: nu
   el.style.width = '32px';
   el.style.height = '32px';
   el.style.borderRadius = '50%';
-  el.style.backgroundColor = '#2563EB'; // primary-600
+  // Create a gradient background
+  el.style.background = 'linear-gradient(135deg, #3B82F6, #1E40AF)'; // blue-500 to blue-800
   el.style.display = 'flex';
   el.style.alignItems = 'center';
   el.style.justifyContent = 'center';
@@ -122,7 +123,7 @@ export function createRoute(map: mapboxgl.Map, coordinates: [number, number][]):
         'line-cap': 'round'
       },
       paint: {
-        'line-color': '#2563EB', // primary-600 
+        'line-color': '#3B82F6', // blue-500 (to match gradient)
         'line-width': 3,
         'line-opacity': 0.8
       }

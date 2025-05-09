@@ -314,7 +314,7 @@ const TripDetails = () => {
                     {pins.map((pin, index) => (
                       <div key={pin.id} className="border border-neutral-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
                         <div className="flex items-center gap-2 mb-3">
-                          <div className="w-7 h-7 bg-primary-600 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md border-2 border-white">
+                          <div className="w-7 h-7 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md border-2 border-white">
                             {index + 1}
                           </div>
                           <h3 className="font-medium text-neutral-800">{pin.title}</h3>
