@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { User, Trip } from '@shared/schema';
-import { useSearchTrips, useDebounce, type PaginationInfo } from '@/hooks/use-search';
+import { useSearchTrips, useDebounce } from '@/hooks/use-search';
 import TripCard from '@/components/TripCard';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, MapPin, Filter } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 const locations = [
@@ -27,18 +27,14 @@ const locations = [
   "Marrakech, Morocco"
 ];
 
-const TRIPS_PER_PAGE = 20;
-
 const BrowserPage = ({ user }: { user?: User }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [sortBy, setSortBy] = useState<'date' | 'likes' | 'views'>('date');
-  const [currentPage, setCurrentPage] = useState(1);
   const debouncedQuery = useDebounce(searchQuery, 300);
   const searchRef = useRef<HTMLInputElement>(null);
   const [location, setLocation] = useLocation();
-  const contentRef = useRef<HTMLDivElement>(null);
 
   // Focus the search input on page load
   useEffect(() => {
@@ -46,11 +42,6 @@ const BrowserPage = ({ user }: { user?: User }) => {
       searchRef.current.focus();
     }
   }, []);
-
-  // Reset to page 1 when search query or sort changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [debouncedQuery, sortBy]);
 
   // Filter suggestions as the user types
   useEffect(() => {
@@ -67,24 +58,8 @@ const BrowserPage = ({ user }: { user?: User }) => {
     setSuggestions(filtered);
   }, [searchQuery]);
 
-  // Use the search hook to fetch results with pagination
-  const { data: searchData, isLoading } = useSearchTrips(
-    debouncedQuery, 
-    sortBy, 
-    currentPage, 
-    TRIPS_PER_PAGE
-  );
-
-  // Extract trips and pagination info
-  const trips = searchData?.trips || [];
-  const pagination = searchData?.pagination || {
-    totalItems: 0,
-    totalPages: 1,
-    currentPage: 1,
-    limit: TRIPS_PER_PAGE,
-    hasNextPage: false,
-    hasPrevPage: false
-  };
+  // Use the search hook to fetch results
+  const { data: searchResults, isLoading } = useSearchTrips(debouncedQuery, sortBy);
 
   // Handle selecting a suggestion
   const handleSelectSuggestion = (suggestion: string) => {
@@ -102,32 +77,8 @@ const BrowserPage = ({ user }: { user?: User }) => {
     setLocation(`/trip/${tripId}`);
   };
 
-  // Handle page change
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-    // Scroll to top of results when page changes
-    if (contentRef.current) {
-      contentRef.current.scrollTop = 0;
-    }
-  };
-
-  // Generate page numbers for pagination
-  const getPageNumbers = (pagination: PaginationInfo) => {
-    const { totalPages, currentPage } = pagination;
-    
-    // Logic to display at most 5 page numbers
-    let startPage = Math.max(1, currentPage - 2);
-    let endPage = Math.min(totalPages, startPage + 4);
-    
-    if (endPage - startPage < 4) {
-      startPage = Math.max(1, endPage - 4);
-    }
-    
-    return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
-  };
-
   return (
-    <div className="flex-grow overflow-auto" ref={contentRef}>
+    <div className="flex-grow overflow-auto">
       <div className="container mx-auto px-4 py-6">
         <h1 className="text-3xl font-heading font-bold mb-6 text-center">
           Browse Trips
@@ -176,11 +127,11 @@ const BrowserPage = ({ user }: { user?: User }) => {
             <div className="text-sm text-gray-500">
               {isLoading ? (
                 'Searching...'
-              ) : pagination.totalItems === 0 ? (
+              ) : searchResults?.length === 0 ? (
                 'No trips found'
-              ) : (
-                `Found ${pagination.totalItems} trips`
-              )}
+              ) : searchResults ? (
+                `Found ${searchResults.length} trips`
+              ) : null}
             </div>
             
             <Tabs defaultValue="date" value={sortBy} onValueChange={handleSortChange} className="w-auto">
@@ -223,9 +174,9 @@ const BrowserPage = ({ user }: { user?: User }) => {
         )}
         
         {/* Results grid */}
-        {!isLoading && trips.length > 0 && (
+        {!isLoading && searchResults && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {trips.map((trip) => (
+            {searchResults.map((trip) => (
               <div key={trip.id} onClick={() => handleTripClick(trip.id)} className="cursor-pointer">
                 <TripCard trip={trip} showDate="range" />
               </div>
@@ -233,99 +184,8 @@ const BrowserPage = ({ user }: { user?: User }) => {
           </div>
         )}
         
-        {/* Pagination controls */}
-        {!isLoading && pagination.totalPages > 1 && (
-          <div className="mt-8 flex justify-center items-center space-x-2">
-            <Button 
-              variant="outline"
-              size="sm"
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={!pagination.hasPrevPage}
-              className="h-9 w-9 p-0 border-yellow-mid text-yellow-gold"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            
-            {pagination.totalPages <= 7 ? (
-              // Show all pages if there are 7 or fewer
-              Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(page => (
-                <Button
-                  key={page}
-                  variant={page === currentPage ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => handlePageChange(page)}
-                  className={`h-9 w-9 p-0 ${
-                    page === currentPage 
-                      ? "bg-yellow-gold hover:bg-yellow-gold/90" 
-                      : "border-yellow-mid text-yellow-gold hover:bg-yellow-light/30"
-                  }`}
-                >
-                  {page}
-                </Button>
-              ))
-            ) : (
-              // Show a subset of pages with ellipsis for many pages
-              <>
-                {currentPage > 3 && (
-                  <>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handlePageChange(1)}
-                      className="h-9 w-9 p-0 border-yellow-mid text-yellow-gold"
-                    >
-                      1
-                    </Button>
-                    <span className="text-gray-500">...</span>
-                  </>
-                )}
-                
-                {getPageNumbers(pagination).map(page => (
-                  <Button
-                    key={page}
-                    variant={page === currentPage ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => handlePageChange(page)}
-                    className={`h-9 w-9 p-0 ${
-                      page === currentPage 
-                        ? "bg-yellow-gold hover:bg-yellow-gold/90" 
-                        : "border-yellow-mid text-yellow-gold hover:bg-yellow-light/30"
-                    }`}
-                  >
-                    {page}
-                  </Button>
-                ))}
-                
-                {currentPage < pagination.totalPages - 2 && (
-                  <>
-                    <span className="text-gray-500">...</span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handlePageChange(pagination.totalPages)}
-                      className="h-9 w-9 p-0 border-yellow-mid text-yellow-gold"
-                    >
-                      {pagination.totalPages}
-                    </Button>
-                  </>
-                )}
-              </>
-            )}
-            
-            <Button 
-              variant="outline"
-              size="sm"
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={!pagination.hasNextPage}
-              className="h-9 w-9 p-0 border-yellow-mid text-yellow-gold"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        )}
-        
         {/* Empty state */}
-        {!isLoading && trips.length === 0 && (
+        {!isLoading && searchResults?.length === 0 && (
           <div className="text-center py-12">
             <div className="text-4xl mb-4">🔍</div>
             <h3 className="text-xl font-medium mb-2">No trips found</h3>

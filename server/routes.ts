@@ -290,32 +290,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         sortBy = req.query.sortBy as 'likes' | 'views' | 'date';
       }
       
-      // Pagination parameters
-      const page = req.query.page ? parseInt(req.query.page as string) : 1;
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
+      console.log(`[search] Query: "${query}", Sort: ${sortBy}`);
       
-      console.log(`[search] Query: "${query}", Sort: ${sortBy}, Page: ${page}, Limit: ${limit}`);
+      const results = await storage.searchTrips(query, sortBy);
+      console.log(`[search] Found ${results.length} results`);
       
-      const allResults = await storage.searchTrips(query, sortBy);
-      console.log(`[search] Found ${allResults.length} total results`);
-      
-      // Calculate pagination
-      const startIndex = (page - 1) * limit;
-      const endIndex = page * limit;
-      const paginatedResults = allResults.slice(startIndex, endIndex);
-      const totalPages = Math.ceil(allResults.length / limit);
-      
-      return res.json({
-        trips: paginatedResults,
-        pagination: {
-          totalItems: allResults.length,
-          totalPages,
-          currentPage: page,
-          limit,
-          hasNextPage: page < totalPages,
-          hasPrevPage: page > 1
-        }
-      });
+      return res.json(results);
     } catch (error) {
       console.error("Error searching trips:", error);
       return res.status(500).json({ message: "Internal server error" });
