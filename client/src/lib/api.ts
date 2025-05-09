@@ -1,5 +1,5 @@
 import { apiRequest } from "./queryClient";
-import { Trip, Pin } from "@shared/schema";
+import { Trip, Pin, User } from "@shared/schema";
 
 // Fetch all trips
 export async function getTrips(): Promise<Trip[]> {
@@ -49,5 +49,11 @@ export async function likeTrip(tripId: number): Promise<Trip> {
 export async function searchTrips(query: string, sortBy: 'likes' | 'views' | 'date' = 'date'): Promise<Trip[]> {
   const url = `/api/search?q=${encodeURIComponent(query)}&sortBy=${sortBy}`;
   const response = await apiRequest('GET', url);
+  return response.json();
+}
+
+// Fetch user by ID
+export async function getUserById(userId: number): Promise<User> {
+  const response = await apiRequest('GET', `/api/users/${userId}`);
   return response.json();
 }
